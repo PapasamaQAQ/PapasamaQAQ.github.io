@@ -1,0 +1,2243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配电班-初级-新员工 - 题研</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f5f7fa;color:#1f2937}
+.app{max-width:900px;margin:0 auto;padding:22px 16px 60px}
+h1{margin:0 0 5px;font-size:28px}.sub{color:#6b7280;margin-bottom:18px}
+.panel,.question-card,.empty-mode,.exam-summary{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.panel{padding:17px;margin-bottom:16px}.info{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.info-title{font-weight:700}.info-meta{color:#6b7280;font-size:14px}
+.search-panel{padding:17px;margin-bottom:16px}
+.search-title{font-weight:700;margin-bottom:10px}
+.search-row{display:flex;gap:9px}
+.search-input{flex:1;min-width:0;padding:12px 14px;border:1px solid #d1d5db;border-radius:11px;font-size:16px;outline:none}
+.search-input:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,139,.10)}
+.search-clear{white-space:nowrap;background:#e5e7eb;color:#111827}
+.search-info{margin-top:10px;color:#6b7280;font-size:13px}
+.search-results{display:none;margin-top:12px;border-top:1px solid #eef2f7;padding-top:10px;max-height:420px;overflow:auto}
+.search-item{width:100%;text-align:left;border:1px solid #e5e7eb;background:#fff;border-radius:11px;padding:12px 13px;margin-bottom:8px;cursor:pointer}
+.search-item:hover{background:#f8fafc;border-color:#94a3b8}
+.search-item-head{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:5px;font-size:13px;color:#64748b}
+.search-item-title{line-height:1.55;color:#1f2937}
+.search-empty{padding:14px 4px;color:#9ca3af;text-align:center}
+.search-view-actions{display:none}
+.search-answer{display:none;margin-top:16px;padding:16px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;line-height:1.75;color:#7c2d12}
+.search-answer.show{display:block}
+.search-answer-title{font-size:17px;font-weight:800;margin-bottom:8px}
+.search-analysis{margin-top:12px;padding-top:12px;border-top:1px solid #fed7aa;color:#374151;white-space:pre-wrap}
+.modes{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+.mode-btn{border:1px solid #dbe2ea;background:#f8fafc;color:#1f2937;border-radius:12px;padding:13px 8px;cursor:pointer;font-size:14px}
+.mode-btn.active{background:#1f2937;color:#fff;border-color:#1f2937}.mode-count{display:block;margin-top:4px;font-size:12px;opacity:.75}
+.type-filter-panel{display:none}
+.type-filter-title{font-weight:700;margin-bottom:10px}
+.type-filter-tip{color:#6b7280;font-size:13px;margin-bottom:12px}
+.type-filters{display:flex;flex-wrap:wrap;gap:8px}
+.type-filter-btn{border:1px solid #dbe2ea;background:#fff;color:#374151;border-radius:999px;padding:9px 14px;font-size:14px;cursor:pointer}
+.type-filter-btn.active{background:#1f2937;color:#fff;border-color:#1f2937}
+.review-mode-panel{display:none}
+.review-mode-title{font-weight:700;margin-bottom:10px}
+.review-mode-tip{color:#6b7280;font-size:13px;margin-bottom:12px}
+.review-mode-buttons{display:flex;flex-wrap:wrap;gap:8px}
+.review-mode-btn{border:1px solid #dbe2ea;background:#fff;color:#374151;border-radius:999px;padding:9px 14px;font-size:14px;cursor:pointer}
+.review-mode-btn.active{background:#0f766e;color:#fff;border-color:#0f766e}
+.order-mode-panel{display:none}
+.order-mode-title{font-weight:700;margin-bottom:10px}
+.order-mode-tip{color:#6b7280;font-size:13px;margin-bottom:12px}
+.order-mode-buttons{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.order-mode-btn{border:1px solid #dbe2ea;background:#fff;color:#374151;border-radius:999px;padding:9px 14px;font-size:14px;cursor:pointer}
+.order-mode-btn.active{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.reshuffle-btn{border:1px dashed #a78bfa;background:#faf5ff;color:#6d28d9;border-radius:999px;padding:9px 14px;font-size:14px;cursor:pointer}
+.question-card{display:none;padding:21px}.q-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px;color:#6b7280;font-size:14px}
+.tag{display:inline-block;margin-left:5px;padding:2px 8px;border-radius:999px;background:#e0f2fe;color:#075985;font-size:12px}
+.score-tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:12px;margin-left:6px}
+.head-right{display:flex;align-items:center;gap:9px}.category{color:#64748b}
+.star{width:38px;height:38px;border:0;border-radius:50%;background:#f1f5f9;cursor:pointer;font-size:23px;line-height:1;padding:0;color:#94a3b8}
+.star.on{color:#f59e0b;background:#fffbeb}.q-title{font-size:19px;font-weight:700;line-height:1.7;margin-bottom:17px;white-space:pre-wrap}
+.options{display:grid;gap:9px}.option{display:flex;gap:10px;align-items:flex-start;width:100%;padding:13px 14px;border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;cursor:pointer;line-height:1.55;user-select:none}
+.option:hover{border-color:#94a3b8;background:#f1f5f9}.option input{margin-top:4px;transform:scale(1.12);flex:0 0 auto}
+.option.selected{border-color:#64748b;background:#eef2f7}.option.correct{border-color:#22c55e;background:#f0fdf4}.option.wrong{border-color:#ef4444;background:#fef2f2}.option.disabled{cursor:default}
+.blank-area{display:grid;gap:11px}.blank-row{display:grid;grid-template-columns:72px 1fr;align-items:center;gap:10px}.blank-label{color:#64748b;font-size:14px}
+.blank-input{width:100%;padding:12px 13px;border:1px solid #d1d5db;border-radius:10px;font-size:16px;outline:none;background:#fff}
+.blank-input.correct{border-color:#22c55e;background:#f0fdf4}.blank-input.wrong{border-color:#ef4444;background:#fef2f2}
+.actions{display:flex;justify-content:center;gap:10px;margin-top:19px;flex-wrap:wrap}
+button{border:0;border-radius:10px;padding:11px 18px;font-size:15px;cursor:pointer}.primary{background:#1f2937;color:#fff}.secondary{background:#e5e7eb;color:#111827}.danger{background:#b91c1c;color:#fff}.danger-light{background:#fee2e2;color:#991b1b}
+button:disabled{opacity:.45;cursor:not-allowed}
+.result{display:none;margin-top:19px;padding:15px 16px;border-radius:12px;line-height:1.7}.result.ok{display:block;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}.result.bad{display:block;background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.analysis-box{margin-top:11px;padding-top:11px;border-top:1px solid rgba(100,116,139,.25);color:#374151;white-space:pre-wrap}.empty{color:#9ca3af}.wrong-note{margin-top:7px;font-weight:600}
+.progress{margin-top:14px;color:#6b7280;font-size:13px;text-align:center}.empty-mode{display:none;padding:26px 16px;text-align:center;color:#6b7280}
+.overview-bar{display:none;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:9px 11px;border-radius:10px;background:#f8fafc;color:#64748b;font-size:13px}
+.overview-btn{padding:7px 11px;border-radius:9px;background:#e2e8f0;color:#334155;font-size:13px;white-space:nowrap}
+.overview-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.48);padding:18px;align-items:flex-end;justify-content:center}
+.overview-modal.show{display:flex}
+.overview-sheet{width:min(720px,100%);max-height:82vh;overflow:auto;background:#fff;border-radius:18px;padding:18px;box-shadow:0 18px 50px rgba(0,0,0,.22)}
+.overview-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
+.overview-head h3{margin:0;font-size:19px}
+.overview-close{padding:7px 10px;background:#e5e7eb;color:#334155}
+.overview-summary{font-size:13px;color:#64748b;margin-bottom:10px}
+.overview-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:#64748b;margin-bottom:12px}
+.legend-dot{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px;border:1px solid #cbd5e1}
+.legend-unanswered{background:#f8fafc}.legend-ok{background:#dcfce7;border-color:#86efac}.legend-bad{background:#fee2e2;border-color:#fca5a5}.legend-current{background:#dbeafe;border:2px solid #2563eb}
+.qnum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:7px}
+.qnum-btn{min-width:0;padding:9px 4px;border:1px solid #cbd5e1;border-radius:9px;background:#f8fafc;color:#334155;font-size:13px}
+.qnum-btn.done-ok{background:#dcfce7;border-color:#86efac;color:#166534}
+.qnum-btn.done-bad{background:#fee2e2;border-color:#fca5a5;color:#991b1b}
+.qnum-btn.done-visited{background:#ede9fe;border-color:#c4b5fd;color:#5b21b6}
+.qnum-btn.done-answered{background:#dbeafe;border-color:#93c5fd;color:#1d4ed8}
+.qnum-btn.exam-unanswered{background:#fef3c7;border-color:#fcd34d;color:#92400e}
+.qnum-btn.current{outline:2px solid #2563eb;outline-offset:1px}
+.overview-footer{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid #e5e7eb}
+.reset-progress-btn{background:#fff;color:#991b1b;border:1px solid #fecaca;padding:8px 11px}
+.memo-answer{margin-top:16px;padding:16px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;line-height:1.75;color:#7c2d12}
+.memo-answer-title{font-size:17px;font-weight:800;margin-bottom:8px}.memo-analysis{margin-top:12px;padding-top:12px;border-top:1px solid #fed7aa;color:#374151;white-space:pre-wrap}.memo-tip{margin-top:10px;color:#9a3412;font-size:13px}
+.exam-setup{display:none}.exam-setup h2{margin:0 0 6px;font-size:21px}.exam-tip{color:#6b7280;margin-bottom:14px;line-height:1.6}
+.exam-grid{display:grid;grid-template-columns:1.1fr .7fr 1fr 1fr;gap:8px;align-items:center}.exam-grid .head{font-size:13px;color:#64748b;font-weight:700;padding-bottom:5px}.exam-grid .type-name{font-weight:650}
+.exam-grid input{width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:9px;font-size:15px}.exam-total{margin-top:15px;padding:12px 14px;border-radius:10px;background:#f8fafc;line-height:1.7}
+.exam-summary{display:none;padding:22px;margin-bottom:16px}.exam-summary h2{margin:0 0 8px}.big-score{font-size:34px;font-weight:800;margin:8px 0 16px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.summary-item{padding:12px;background:#f8fafc;border-radius:12px;text-align:center;line-height:1.55}
+.summary-item strong{display:block;font-size:18px;margin-bottom:2px}.exam-note{margin-top:12px;color:#6b7280;line-height:1.6;font-size:14px}
+@media(max-width:820px){.modes{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:720px){.summary-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){
+  body{font-size:14px}
+  .app{padding:10px 8px 80px}
+  h1{font-size:20px;line-height:1.25;margin-bottom:2px}
+  .sub{font-size:12px;margin-bottom:8px}
+  .panel{padding:10px;margin-bottom:8px;border-radius:12px}
+  .info{gap:5px}.info-title{font-size:13px}.info-meta{font-size:11px}
+  .search-panel{padding:10px}.search-title{font-size:14px;margin-bottom:7px}
+  .search-row{flex-direction:column;gap:6px}.search-input{padding:9px 10px;font-size:14px}.search-clear{width:100%;padding:8px}
+  .search-info{font-size:11px;margin-top:6px}
+  .modes{grid-template-columns:repeat(2,1fr);gap:6px}.mode-btn{padding:9px 5px;font-size:12px;border-radius:10px}.mode-count{font-size:10px;margin-top:2px}
+  .type-filter-title{font-size:13px;margin-bottom:6px}.type-filter-tip{font-size:11px;margin-bottom:7px}.type-filters{gap:5px}.type-filter-btn{padding:7px 10px;font-size:12px}.review-mode-title,.order-mode-title{font-size:13px;margin-bottom:6px}.review-mode-tip,.order-mode-tip{font-size:11px;margin-bottom:7px}.review-mode-buttons,.order-mode-buttons{gap:5px}.review-mode-btn,.order-mode-btn,.reshuffle-btn{padding:7px 10px;font-size:12px}
+  .question-card{padding:11px 9px 76px;border-radius:12px}
+  .q-head{gap:6px;margin-bottom:7px;font-size:11px}.tag{font-size:10px;padding:1px 6px}.score-tag{font-size:10px;padding:1px 6px}
+  .star{width:31px;height:31px;font-size:19px}
+  .q-title{font-size:16px;line-height:1.48;margin-bottom:9px}
+  .options{gap:5px}.option{gap:7px;padding:8px 9px;border-radius:9px;line-height:1.4;font-size:13px}.option input{margin-top:2px;transform:scale(1.0)}
+  .blank-area{gap:7px}.blank-row{grid-template-columns:1fr;gap:3px}.blank-label{font-size:11px}.blank-input{padding:9px 10px;font-size:14px}
+  .actions{gap:5px;margin-top:9px}button{padding:8px 10px;font-size:12px;border-radius:8px}
+  .result{margin-top:9px;padding:9px 10px;line-height:1.48;font-size:13px}.analysis-box{margin-top:6px;padding-top:6px}
+  .memo-answer,.search-answer{margin-top:9px;padding:10px;line-height:1.5;font-size:13px}.memo-answer-title,.search-answer-title{font-size:14px;margin-bottom:5px}.memo-analysis,.search-analysis{margin-top:7px;padding-top:7px}.memo-tip{font-size:11px;margin-top:6px}
+  .progress{font-size:11px;margin-top:8px}
+  .overview-bar{margin-bottom:8px;padding:7px 8px;font-size:11px}.overview-btn{padding:6px 8px;font-size:11px}
+  .overview-modal{padding:8px}.overview-sheet{max-height:88vh;border-radius:15px;padding:12px}.overview-head h3{font-size:16px}
+  .qnum-grid{grid-template-columns:repeat(6,1fr);gap:5px}.qnum-btn{padding:8px 2px;font-size:11px;border-radius:7px}
+  #practiceActions,#memoActions,#examActions,#searchViewActions{
+    position:sticky;
+    bottom:calc(env(safe-area-inset-bottom) + 4px);
+    z-index:30;
+    background:rgba(255,255,255,.96);
+    padding:6px 4px;
+    margin-left:-3px;
+    margin-right:-3px;
+    border-radius:11px;
+    box-shadow:0 -3px 14px rgba(15,23,42,.10);
+    backdrop-filter:blur(8px);
+  }
+  #practiceActions button,#memoActions button,#examActions button{flex:1;min-width:0;padding-left:5px;padding-right:5px}
+  .exam-grid{grid-template-columns:1fr .7fr .9fr .9fr;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>配电班-初级-新员工</h1>
+<div class="sub">题研 · 分享刷题版</div>
+
+<div class="panel"><div class="info"><div class="info-title">题库已加载，可直接开始</div><div id="bankMeta" class="info-meta"></div></div></div>
+
+<div class="panel search-panel">
+  <div class="search-title">🔍 题目搜索</div>
+  <div class="search-row">
+    <input id="searchInput" class="search-input" type="search" placeholder="输入题干、选项或答案关键字，例如：电力设备">
+    <button id="clearSearchBtn" class="search-clear">清空</button>
+  </div>
+  <div id="searchInfo" class="search-info">输入关键字即可搜索题干、选项和正确答案。</div>
+  <div id="searchResults" class="search-results"></div>
+</div>
+
+<div class="panel">
+<div class="modes">
+<button class="mode-btn" data-mode="memo">📖 背题模式<span class="mode-count">直接看答案</span></button>
+<button class="mode-btn active" data-mode="all">📚 刷题模式<span id="allCount" class="mode-count">0 题</span></button>
+<button class="mode-btn" data-mode="wrong">❌ 错题<span id="wrongCount" class="mode-count">0 题</span></button>
+<button class="mode-btn" data-mode="fav">⭐ 收藏<span id="favCount" class="mode-count">0 题</span></button>
+<button class="mode-btn" data-mode="exam">📝 模拟考试<span class="mode-count">自定义组卷</span></button>
+</div>
+</div>
+
+<div id="typeFilterPanel" class="panel type-filter-panel">
+  <div class="type-filter-title" id="typeFilterTitle">专项训练</div>
+  <div class="type-filter-tip">只显示当前题库实际存在的题型；“全部题型”始终保留。</div>
+  <div id="typeFilters" class="type-filters"></div>
+</div>
+
+<div id="reviewModePanel" class="panel review-mode-panel">
+  <div id="reviewModeTitle" class="review-mode-title">复习方式</div>
+  <div id="reviewModeTip" class="review-mode-tip">选择重新作答，或直接查看答案与解析。</div>
+  <div id="reviewModeButtons" class="review-mode-buttons"></div>
+</div>
+
+<div id="orderModePanel" class="panel order-mode-panel">
+  <div class="order-mode-title">训练顺序</div>
+  <div id="orderModeTip" class="order-mode-tip">顺序训练按题库原顺序；乱序训练会固定本轮随机顺序。</div>
+  <div id="orderModeButtons" class="order-mode-buttons"></div>
+</div>
+
+<div id="examSetup" class="panel exam-setup">
+<h2>模拟考试设置</h2>
+<div class="exam-tip">每种题型可分别设置题数和每题分值，自动随机抽题且不重复。</div>
+<div class="exam-grid">
+<div class="head">题型</div><div class="head">可用</div><div class="head">题数</div><div class="head">每题分值</div>
+<div class="type-name">单选题</div><div id="availSingle">0</div><input id="countSingle" type="number" min="0" step="1" value="0"><input id="scoreSingle" type="number" min="0" step="0.5" value="2">
+<div class="type-name">多选题</div><div id="availMulti">0</div><input id="countMulti" type="number" min="0" step="1" value="0"><input id="scoreMulti" type="number" min="0" step="0.5" value="2">
+<div class="type-name">判断题</div><div id="availJudge">0</div><input id="countJudge" type="number" min="0" step="1" value="0"><input id="scoreJudge" type="number" min="0" step="0.5" value="1">
+<div class="type-name">填空题</div><div id="availBlank">0</div><input id="countBlank" type="number" min="0" step="1" value="0"><input id="scoreBlank" type="number" min="0" step="0.5" value="2">
+</div>
+<div id="examTotal" class="exam-total">总题数：0 ｜ 总分：0</div>
+<div class="actions"><button id="startExamBtn" class="primary">随机生成试卷</button></div>
+</div>
+
+<div id="examSummary" class="exam-summary"></div>
+<div id="emptyMode" class="empty-mode"></div>
+
+<div id="questionCard" class="question-card">
+<div class="q-head"><div id="qMeta"></div><div class="head-right"><div id="qCategory" class="category"></div><button id="starBtn" class="star" title="收藏/取消收藏">☆</button></div></div>
+<div id="overviewBar" class="overview-bar">
+  <span id="overviewInlineSummary">已做 0｜未做 0</span>
+  <button id="openOverviewBtn" class="overview-btn">☷ 题号总览</button>
+</div>
+<div id="qTitle" class="q-title"></div>
+<div id="answerArea"></div>
+
+<div id="practiceActions" class="actions">
+<button id="prevBtn" class="secondary">上一题</button>
+<button id="submitBtn" class="primary">提交答案</button>
+<button id="nextBtn" class="secondary">下一题</button>
+</div>
+
+<div id="wrongManageActions" class="actions" style="display:none;">
+<button id="removeWrongDirectBtn" class="danger-light">移出错题集</button>
+</div>
+
+<div id="searchViewActions" class="actions search-view-actions">
+<button id="searchPrevBtn" class="secondary">上一条结果</button>
+<button id="toggleSearchAnswerBtn" class="primary">查看答案</button>
+<button id="backToSearchBtn" class="secondary">返回搜索结果</button>
+<button id="searchNextBtn" class="secondary">下一条结果</button>
+</div>
+
+<div id="memoActions" class="actions" style="display:none;">
+<button id="memoPrevBtn" class="secondary">上一题</button>
+<button id="memoNextBtn" class="secondary">下一题</button>
+</div>
+
+<div id="examActions" class="actions" style="display:none;">
+<button id="examPrevBtn" class="secondary">上一题</button>
+<button id="submitExamBtn" class="danger">提交试卷</button>
+<button id="examNextBtn" class="secondary">下一题</button>
+</div>
+
+<div id="result" class="result"></div>
+<div id="progress" class="progress"></div>
+</div>
+</div>
+
+<div id="overviewModal" class="overview-modal">
+  <div class="overview-sheet">
+    <div class="overview-head">
+      <h3>题号总览</h3>
+      <button id="closeOverviewBtn" class="overview-close">关闭</button>
+    </div>
+    <div id="overviewModalSummary" class="overview-summary"></div>
+    <div id="overviewLegend" class="overview-legend"></div>
+    <div id="qnumGrid" class="qnum-grid"></div>
+    <div class="overview-footer">
+      <span style="font-size:12px;color:#64748b;">点击题号可直接跳转</span>
+      <button id="resetProgressBtn" class="reset-progress-btn">清空刷题进度</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BANK_TITLE="配电班-初级-新员工";
+const ALL_QUESTIONS=[{"题号":"1","题型":"单选","题目":"《中华人民共和国电力法》：电力企业应当加强安全生产管理，建立、健全安全生产( )制。","A":"承包","B":"责任","C":"奖励","D":"惩罚","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"2","题型":"单选","题目":"《中华人民共和国电力法》：国家提倡电力( )与电网、电网与电网并网运行。","A":"生产企业","B":"用户","C":"建设单位","D":"以上均不正确","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"3","题型":"单选","题目":"《中华人民共和国电力法》：任何单位和个人不得在依法划定的电力设施保护区内修建可能危及( )安全的建筑物、构筑物。","A":"水利设施","B":"电力设施","C":"交通设施","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"4","题型":"单选","题目":"《中华人民共和国电力法》：任何单位和个人需要在依法划定的电力设施保护区内进行可能危及电力设施安全的作业时，应当经( )批准并采取安全措施后，方可进行作业。","A":"公安部门","B":"当地政府","C":"电力管理部门","D":"以上均不正确","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"5","题型":"单选","题目":"《安全生产法》规定：国家鼓励和支持安全生产科学技术研究和安全生产先进技术的推广应用，提高( )水平。","A":"安全生产","B":"电力生产","C":"技能","D":"技术","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"6","题型":"单选","题目":"国家实行生产安全( )责任追究制度，依照本法和有关法律、法规的规定，追究生产安全事故责任单位和责任人员的法律责任。","A":"事件","B":"事故","C":"事实","D":"事情","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"7","题型":"单选","题目":"安全生产工作应当( )为本，坚持人民至上、生命至上，把保护人民生命安全摆在首位，树牢安全发展理念，坚持安全第一、预防为主、综合治理的方针，从源头上防范化解重大安全风险。","A":"设备","B":"设施","C":"以事","D":"以人","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"8","题型":"单选","题目":"生产经营单位发生生产安全事故后，事故现场有关人员应当立即报告本单位( )。","A":"负责人","B":"保安","C":"技术部","D":"人事部","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"9","题型":"单选","题目":"《电力设施保护条例》：10千伏电力保护区：导线外线向外侧水平延伸( )并垂直地面所形成两平行面内的区域。","A":"3.0米","B":"5.0米","C":"8.0米","D":"10.0米","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"10","题型":"单选","题目":"《电力设施保护条例》：电力设施受国家法律保护，禁止任何单位或个人从事( )电力设施的行为。","A":"危害","B":"保护","C":"维护","D":"监护","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"11","题型":"单选","题目":"电力设施保护条例实施细则：1-10kV导线边线在计算导线最大风偏情况下，距建筑物的水平安全距离是( )米。","A":"1.0米","B":"1.5米","C":"3米","D":"4米","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"12","题型":"单选","题目":"《电力设施保护条例实施细则》：禁止在电力电缆沟内同时埋设( )。","A":"输水","B":"排污","C":"其他管道","D":"排水","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"13","题型":"单选","题目":"《电力设施保护条例实施细则》：任何单位和个人不得在距电力设施范围( )（指水平距离）进行爆破作业。","A":"300米","B":"500米","C":"550米","D":"620米","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"14","题型":"单选","题目":"《电力设施保护条例实施细则》：电力管理部门应在下列地点设置安全标志：( )。","A":"架空电力线路穿越的人口密集地段","B":"特殊情况下，架空电力线路跨越的建筑物上","C":"所有用电设备上","D":"变电站内的变压器上","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"15","题型":"单选","题目":"防雷装置应在( )投入运行。","A":"雷季之前","B":"雷雨季之后","C":"雷季之后","D":"雨季之后","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"16","题型":"单选","题目":"配变站的接地装置的接地电阻不应大于( )。","A":"4Ω","B":"6Ω","C":"8Ω","D":"10Ω","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"17","题型":"单选","题目":"搁置或停运六个月以上的变压器，投运前应做( )试验。","A":"绝缘电阻","B":"绝缘电阻和绝缘油耐压","C":"绝缘油耐压","D":"绝缘油色谱","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"18","题型":"单选","题目":"变压器并列前应作( )试验。","A":"绝缘电阻","B":"绝缘油耐压","C":"核相","D":"绝缘油色谱","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"19","题型":"单选","题目":"变压器的投运台数应按照负载情况，从( )原则出发，合理安排。","A":"安全、环保","B":"环保、经济","C":"安全、经济","D":"形象、经济","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"20","题型":"单选","题目":"对配电变压器应在( )期间测量三相电流，并设法保持基本平衡。","A":"最小负载","B":"最大负载","C":"空载","D":"发生故障","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"21","题型":"单选","题目":"变压器中性点接地属于( )。","A":"工作接地","B":"保护接地","C":"保护接零","D":"故障接地","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"22","题型":"单选","题目":"自然循环冷却变压器的顶层油温一般不宜经常超过( )。","A":"60℃","B":"70℃","C":"75℃","D":"85℃","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"23","题型":"单选","题目":"民用无人驾驶航空器系统驾驶员合格证申请人必须在民用无人驾驶航空器系统上训练不少于多少小时的飞行训练时间","A":"56","B":"44","C":"100","D":"150","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"24","题型":"单选","题目":"在融合空域3，000米以下运行的小型无人机驾驶员，应至少持有","A":"航线运输执照","B":"仪表证","C":"商照","D":"私照","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"25","题型":"单选","题目":"小型无人机，是指空机质量小于等于( )千克的无人机，微型和轻型无人机除外","A":"116","B":"5700","C":"1260","D":"150","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"26","题型":"单选","题目":"驾驶员应对每个签注的无人机类型接受熟练检查，该检查每( )进行一次。","A":"6个月","B":"12个月","C":"18个月","D":"24个月","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"27","题型":"单选","题目":"( )，是指专门分配给无人机系统运行的空域，通过限制其它航空器的进入以规避碰撞风险","A":"融合空域","B":"机场净空区","C":"隔离空域","D":"超低空","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"28","题型":"单选","题目":"( )在操作民用无人机时不得粗心大意和盲目蛮干，以免危及他人的生命或财产安全","A":"无人机系统驾驶员","B":"无人机系统机长","C":"无人机观测员","D":"任何人员","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"29","题型":"单选","题目":"( )是由运营人指派对无人机的运行负有必不可少责任并在飞行期间适时操纵无人机的人","A":"无人机系统驾驶员","B":"无人机系统的机长","C":"无人机观测员","D":"运营人","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"30","题型":"单选","题目":"民用无人机使用说明书应当使用机长、驾驶员及观测员能够理解的( )","A":"语言文字","B":"图表","C":"视频","D":"国际语言","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"31","题型":"单选","题目":"遇到强风、暴雨、大雾、雷电、冰雹、沙尘暴等恶劣天气时，应( )野外作业。","A":"停止","B":"继续","C":"减少","D":"加强","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"32","题型":"单选","题目":"( )采用突然剪断导（地）线的方法松线。","A":"可以","B":"必须","C":"不应","D":"应当","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"33","题型":"单选","题目":"个人保安线用于保护( )。","A":"个人的接地线","B":"线路接地线","C":"工作人员防止感应电伤害的接地线","D":"个人安全带","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"34","题型":"单选","题目":"验明高压设备或线路确无电压后，应立即将检修设备( )。电缆及电容器接地前应逐相充分放电。","A":"转冷备用状态","B":"接地并三相短路","C":"隔离","D":"短路","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"35","题型":"单选","题目":"有限空间的温度超过( )℃时，不应进行作业。","A":"50","B":"60","C":"65","D":"70","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"36","题型":"单选","题目":"间接验电时，应有( )及以上非同样原理或非同源的指示且均已同时发生对应变化，才能确认该设备已无电；但如果任一指示有电，则不应在该设备上工作。","A":"一个","B":"两个","C":"三个","D":"四个","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"37","题型":"单选","题目":"高压设备带电作业需选用( )。","A":"配电第一种工作票","B":"线路第一种工作票","C":"配电第二种工作票","D":"带电作业工作票","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"38","题型":"单选","题目":"全部作业结束，作业人员撤离现场后、办理作业终结前，( )未经工作负责人许可，不应进入工作现场。","A":"作业人员","B":"任何人员","C":"工作人员","D":"检修人员","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"39","题型":"单选","题目":"避雷针的接地装置是( )。","A":"保护接地","B":"保护接零","C":"工作接地","D":"重复接地","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"40","题型":"单选","题目":"定检过程中，与电源直接接触的工具外露部分用( )密封。","A":"绝缘漆","B":"绝缘带","C":"绝缘胶布","D":"绝缘绳","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"41","题型":"单选","题目":"配电变压器绕组应采用优质( )导线。","A":"铁","B":"铜","C":"铝","D":"锡","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"42","题型":"单选","题目":"油浸变压器上层油温不宜超过( )。","A":"75℃;","B":"85℃","C":"90℃","D":"95℃","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"43","题型":"单选","题目":"发布和接受操作任务时，必须( )，使用规范术语、双重名称，严格执行复诵制，双方录音。","A":"互保姓名","B":"互报单位、姓名","C":"互保单位","D":"报告时间","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"44","题型":"单选","题目":"一份操作票( )操作任务。","A":"只能填写一个","B":"只能填写两个","C":"可以填写多个","D":"未作具体要求","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"45","题型":"单选","题目":"根据设备管辖权限，电气操作应按( )或现场值班负责人指令进行。","A":"工作负责人指令","B":"工作票签发人指令","C":"调度员命令","D":"自身判断","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"46","题型":"单选","题目":"电气设备需要接地操作时，必须先( )。","A":"倒负荷","B":"验电","C":"装设遮拦","D":"戴安全带","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"47","题型":"单选","题目":"手动操作隔离开关时，必须( )。","A":"戴绝缘手套","B":"戴安全带","C":"装接地线","D":"使用绝缘梯","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"48","题型":"单选","题目":"电容器组停电接地前，应( )进行验电接地。","A":"直接","B":"报告领导后方可","C":"待放电完毕后方可","D":"待充电完毕后方可","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"49","题型":"单选","题目":"倒闸操作应使用( )。","A":"工作票","B":"小组派工单","C":"操作票","D":"操作方案","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"50","题型":"单选","题目":"下列必需填用操作票的任务是( )。","A":"事故处理","B":"寻找直流系统接地或摇测绝缘","C":"投入、退出保护(或自动装置)的一个连接片","D":"线路侧隔离开关停电","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"51","题型":"单选","题目":"在操作SF6开关前发现异味、异响、漏气时，应( )操作。","A":"继续","B":"禁止","C":"报告班长后","D":"自行检查后","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"52","题型":"单选","题目":"按《中国南方电网有限责任公司电气操作票管理规定》，已执行、未执行和作废的操作票保存至少( )。","A":"一个月","B":"三个月","C":"半年","D":"一年","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"53","题型":"单选","题目":"隔离开关能进行切断励磁电流不超过( )的空载变压器的操作。","A":"5A","B":"4A","C":"2A","D":"1A","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"54","题型":"单选","题目":"按《中国南方电网有限责任公司电气操作导则》对“一个操作任务”的定义，下列说法错误的是( )。","A":"一组操作人员在某一时段所执行的操作内容","B":"将一种电气运行方式改变为另一种运行方式","C":"将一条线路由一种状态改变为另一种状态","D":"一系列相互关联、并按一定顺序进行的操作","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"55","题型":"单选","题目":"操作票出现有下列情形时应定性为“不规范票”( )。","A":"操作项目有漏项","B":"操作项目顺序原则错误","C":"时间没有按照24小时制填写","D":"使用蓝、黑色圆珠笔或钢笔填写操作票","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"56","题型":"单选","题目":"操作票的考核内容不包括( )的操作票。","A":"不合格","B":"规范","C":"不规范","D":"作废","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"57","题型":"单选","题目":"操作人员参加地区供电局人力资源部统一组织进行的操作人员资格考核，经考核合格后，以( )形式公布对应的资格范围和有效时间。。","A":"口头或电话","B":"书面","C":"公告栏","D":"信息系统","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"58","题型":"单选","题目":"某班组执行的一份操作票经审查该票所执行的任务和项目均正确，但在“盖章处”盖了“未执行”章该操作票应定性为( )。","A":"合格票","B":"不合格票","C":"规范票","D":"不规范票","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"59","题型":"单选","题目":"某班组执行的一份操作票中，需在某位置装设1组接地线，在其操作票中该接地线编号为04，而在现场实际装设的地线编号为014。该操作票应定性为( )。","A":"合格票","B":"不合格票","C":"规范票","D":"不规范票","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"60","题型":"单选","题目":"作业人员离开工作现场，工作票所列安全措施不变，宜办理工作( )，但每次复工前应检查安全措施正确完好。","A":"间断","B":"终结","C":"延期","D":"改期","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"61","题型":"单选","题目":"( )可在工作前送至许可部门，经许可人审查无误后，签名并填写收到时间。","A":"计划工作","B":"临时工作","C":"紧急抢修","D":"事故处理","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"62","题型":"单选","题目":"( )是指不参与具体工作，负责监督和看护工作成员的工作行为是否符合安全标准的责任人员。","A":"工作票签发人","B":"工作负责人","C":"工作监护人","D":"工作许可人","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"63","题型":"单选","题目":"许可人在审票时发现未按要求填写工作票、工作票各栏填写错误或不明确，应当( )。","A":"拒收工作票","B":"问明白后再收工作票","C":"接收工作票","D":"修改后接收工作票","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"64","题型":"单选","题目":"一份工作票，延续手续( )。","A":"只能办理一次","B":"只能办理两次","C":"可以办理三次","D":"视工作情况办理多次","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"65","题型":"单选","题目":"在厂站内，非设备运维人员对设备进行红外、紫外检测的工作( )。","A":"应办理厂站第一种工作票","B":"应办理厂站第二种工作票","C":"应办理厂站第三种工作票","D":"无需办理工作票","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"66","题型":"单选","题目":"( )审查工作票或调度检修申请单无误后，正确完整地组织实施各项安全措施并做好安全注意事项的提醒。","A":"工作许可人","B":"工作票签发人","C":"工作负责人","D":"值班负责人","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"67","题型":"单选","题目":"配电运行工作应开展设备运维策略及管控机制建设，开展配电线路及设备状态评价和重要性评估，逐步实现配电设备( )管理。","A":"计划性","B":"周期性","C":"差异化","D":"常态化","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"68","题型":"单选","题目":"配电变压器在低压侧母线上安装无功自动补偿装置时，容量按配电变压器容量( )\n考虑。","A":"20％～40％","B":"10％～20％","C":"15％～30％","D":"30％～50％","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"69","题型":"单选","题目":"公用变压器台区投入较大负荷应及时测量( )。","A":"线路弧垂","B":"接地电阻","C":"电流","D":"电压","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"70","题型":"单选","题目":"邻近电力设施保护区的各种施工作业区域，对挖掘暴露及附近有施工存在外力破坏危险的线路，每周至少巡视( )。","A":"一次","B":"二次","C":"三次","D":"四次","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"71","题型":"单选","题目":"台风来临前应对防风拉线装置完好性再次进行检查，拉线松动或缺失按( )处理。","A":"一般缺陷","B":"重大缺陷","C":"紧急缺陷","D":"严重缺陷","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"72","题型":"单选","题目":"电缆线路及电缆通道设备定期巡视周期( )。","A":"15天","B":"一个月","C":"二个月","D":"三个月","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"73","题型":"单选","题目":"工作负责人提前( )天向配网值班负责人提出，配网值班负责人填写防误装置开锁钥匙使用审批单，报运维班班长批准。","A":"1天","B":"1.5天","C":"2天","D":"3天","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"74","题型":"单选","题目":"根据( )和上级规定，制定公司防误装置的有关管理制度。","A":"政府","B":"公司","C":"行业","D":"部门","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"75","题型":"单选","题目":"( )监督防误装置的配置及运行维护管理","A":"设备运行部门","B":"生产技术部","C":"调度部门","D":"公司安全监察部职责","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"76","题型":"单选","题目":"运行部门做好防误装置主机中防误闭锁系统信息的备份","A":"半月","B":"每月","C":"两个月","D":"三个月","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"77","题型":"单选","题目":"职能部门( )必须对防误闭锁装置年度工作情况进行总结，对防误闭锁装置异常、缺陷及事故、操作解锁次数进行统计分析。","A":"三个月","B":"半年","C":"每年","D":"一年半","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"78","题型":"单选","题目":"检查解锁用具存放地点，确保解锁钥匙或用具存放于专用钥匙箱，且钥匙箱外封条完好，封条上查封日期清晰明了并有查封人员( )。","A":"确认","B":"签名","C":"盖章","D":"看管","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"79","题型":"单选","题目":"有可能危及行人或行车安全的杆塔拉线上应套上涂成红白相间的保护管作为警告标志，管长度沿拉线不小于( )m","A":"2.3m","B":"2.5m","C":"2.8m","D":"3.0m","E":"","F":"","正确答案":"D","解析":"无","分类":""},{"题号":"80","题型":"单选","题目":"( )的作用是提醒工作人员注意地面上的障碍物，防止意外发生。","A":"防止绊跤线","B":"安全警示线","C":"防止碰头线","D":"禁止警示线","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"81","题型":"单选","题目":"室外安全警示线应采用公路专用的高耐磨性的( )漆进行涂刷。","A":"橙色荧光油","B":"绿色荧光油","C":"黄色荧光油","D":"红色荧光油","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"82","题型":"单选","题目":"供电所应有安全工具室，室内设置安全工具柜（架），并有专门的防潮设施和( )。","A":"压力表","B":"温度表","C":"湿度表","D":"防爆设施","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"83","题型":"单选","题目":"在电房内裸导体正上方，不应布置灯具和照明线路。当裸导体上方布置灯具时，灯具与裸导体的水平间距不应少于( )m，灯具不得采用吊链和软线吊装。","A":"1","B":"0.8","C":"1.2","D":"1.5","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"84","题型":"单选","题目":"当发生触电而高压电源开关距离现场较远，不便拉闸时，应立即电话通知( )拉闸停电。","A":"供电部门","B":"公安部门","C":"政府部门","D":"以上均不正确","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"85","题型":"单选","题目":"电流从一相导体通过人体流入另一相导体，构成一个闭合回路，这种触电方式称为( )触电。","A":"单相","B":"两相","C":"间接","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"86","题型":"单选","题目":"紧急救护的基本原则是在现场采取积极措施，保护伤员的生命，减轻伤情，减少痛苦，并根据伤情需要，迅速与( )联系救治。","A":"地方政府","B":"医疗急救中心((医疗部门))","C":"领导及管理人员","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"87","题型":"单选","题目":"判断伤员有无意识和反应，应在( )时间以内完成。","A":"10s","B":"8s","C":"6s","D":"15s","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"88","题型":"单选","题目":"当心跳.呼吸骤停的伤员进行心肺复苏时首先应( )。","A":"心前区叩击","B":"心脏按压","C":"口对口人工呼吸","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"89","题型":"单选","题目":"电击伤伤员的现场救护,需立即( )。","A":"注意保温","B":"脱离电源","C":"包扎伤口","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"90","题型":"单选","题目":"毒蛇咬伤后，应在伤口( )用布扎紧，以减少毒液的吸收。","A":"近心端","B":"远心端","C":"正上方","D":"正下方","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"91","题型":"单选","题目":"急救成功的关键是( )，操作正确。","A":"寻找医生","B":"送往医院","C":"动作快","D":"以上均不正确","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"92","题型":"单选","题目":"火灾危险性很大，发生火灾时后果很严重的部位或场所是( )动火区。","A":"三级","B":"一级","C":"二级","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"93","题型":"单选","题目":"遇有电气设备着火时，应立即将有关设备的( )，然后进行救火。","A":"保护停用","B":"电源切断","C":"开关断开","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"94","题型":"单选","题目":"当灭火人员发现有毒烟气时，应戴上( )。","A":"绝缘手套","B":"防毒面具","C":"绝缘鞋","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"95","题型":"单选","题目":"创伤急救原则上是( )。","A":"先固定，后搬运，再抢救","B":"先搬运，后固定，再抢救","C":"先抢救，后固定，再搬运","D":"以上均不正确","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"96","题型":"单选","题目":"电气工具和用具应由专人保管，每6个月应由电气试验单位定期( )。","A":"进行检查","B":"作耐压试验","C":"进行清洗","D":"以上均不正确","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"97","题型":"单选","题目":"工作班成员的安全责任之一：熟悉工作内容、工作流程，掌握安全措施，明确工作中的危险点，并履行( )手续。","A":"签到","B":"许可","C":"确认","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"98","题型":"单选","题目":"工作场所的照明，应该保证( )。","A":"完好无缺","B":"足够的亮度","C":"安全可靠","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"99","题型":"单选","题目":"工作负责人、专责监护人应始终在工作现场，对工作班人员的安全( )，及时纠正不安全的行为。","A":"高度负责","B":"认真监护","C":"给予关注","D":"以上均不正确","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"100","题型":"单选","题目":"在10kV及以下的带电杆塔上进行工作，工作人员距最下层高压带电导线垂直距离不得小于( )m。","A":"0.3","B":"0.7","C":"1","D":"1.5","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"101","题型":"单选","题目":"高压设备发生接地时，室内不得接近故障点( )m以内。","A":"4","B":"8","C":"10","D":"12","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"102","题型":"单选","题目":"工作期间，工作负责人若因故暂时离开工作现场时，应指定( )的人员临时代替。","A":"熟悉安全规程","B":"责任心强","C":"能胜任","D":"以上均不正确","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"103","题型":"单选","题目":"电力安全工器具经试验或检验合格后，必须在合格的安全工器具上(不妨碍绝缘性能且醒目的部位)贴上“试验合格证”标签，注明试验人、试验日期及( )。","A":"出厂日期","B":"试验项目","C":"下次试验日期","D":"以上均不正确","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"104","题型":"单选","题目":"对安全工器具的( )性能发生疑问时，应进行试验，合格后方可使用。","A":"质量、价格","B":"绝缘、外观","C":"机械、绝缘","D":"以上均不正确","E":"","F":"","正确答案":"C","解析":"无","分类":""},{"题号":"105","题型":"单选","题目":"凡在离地面(坠落高度基准面)( )m及以上的地点进行的工作，都应视作高处作业。","A":"1","B":"2","C":"3","D":"4","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"106","题型":"多选","题目":"任何单位或个人在架空线路保护区内，必须遵守下列规定：( )","A":"不得堆放影响安全供电的物品","B":"不得烧窑、烧荒","C":"不得兴建建筑物、构筑物","D":"不得种植可能危及电力设施安全的植物","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"107","题型":"多选","题目":"配电线路及其设备应有明显的标志，主要标志内容如下：( )。","A":"配电线路名称和杆塔编号","B":"配变站的名称或编号","C":"相位标志","D":"开关的名称和编号","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"108","题型":"多选","题目":"变压器检查的内容包括：( )。","A":"外壳及箱沿应无异常发热","B":"各种标志应齐全明显","C":"各种保护装置应齐全、良好","D":"各部位的接地应完好","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"109","题型":"多选","题目":"变压器用熔断器保护时，熔断器性能必须满足系统( )的要求。","A":"短路容量","B":"灵敏度","C":"选择性","D":"经济性","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"110","题型":"多选","题目":"在下列情况下( )应对变压器进行特殊巡视检查，增加巡视检查次数。","A":"高温季节、高峰负载期间","B":"有严重缺陷时","C":"气象突变(如大风、大雾等)时","D":"雷雨季节特别是雷雨后","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"111","题型":"多选","题目":"局方对无人机系统驾驶员的执照要求","A":"在融合空域3000米以下运行的Ⅺ类无人机驾驶员，应至少持有运动或私用驾驶员执照，并带有相似的类别等级（如适用）","B":"在融合空域3000米以上运行的Ⅺ类无人机驾驶员，应至少持有带有飞机或直升机等级的商用驾驶员执照","C":"在融合空域运行的Ⅻ类无人机驾驶员，应至少持有带有飞机或直升机等级的商用驾驶员执照和仪表等级","D":"在融合空域运行的Ⅻ类无人机机长，应至少持有航线运输驾驶员执照","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"112","题型":"多选","题目":"对于完成训练并考试合格人员，在其驾驶员执照上签注哪些信息","A":"无人机型号","B":"无人机类型","C":"无人机照片","D":"职位，包括机长、驾驶员","E":"","F":"","正确答案":"ABD","解析":"无","分类":""},{"题号":"113","题型":"多选","题目":"飞行技能考试中口试内容包括","A":"所使用的无人机系统生产流程","B":"所使用的无人机系统特性","C":"所使用的无人机系统正常操作程序","D":"所使用的无人机系统应急操作程序","E":"","F":"","正确答案":"BCD","解析":"无","分类":""},{"题号":"114","题型":"多选","题目":"空机重量，是指不包括( )的无人机重量","A":"载荷","B":"燃料","C":"燃料容器","D":"电池","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"115","题型":"多选","题目":"电子围栏，是指为阻挡即将侵入特定区域的航空器，在相应电子地理范围中画出特定区域，并配合( )的软硬件系统","A":"航空器图传","B":"飞行控制系统","C":"保障区域安全","D":"隔离空域","E":"","F":"","正确答案":"BC","解析":"无","分类":""},{"题号":"116","题型":"多选","题目":"哪类无人机应安装并使用电子围栏","A":"Ⅲ","B":"Ⅳ","C":"Ⅵ","D":"Ⅶ","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"117","题型":"多选","题目":"本单位运维人员开展以下( )工作可不选用工作票，但应履行规定的作业审批手续：","A":"巡视工作；","B":"红外测温工作；","C":"不需登杆塔的接地电阻测量和验收工作；","D":"开关柜局部放电检测","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"118","题型":"多选","题目":"电力生产中保证安全的组织措施包括下面哪项：( )。","A":"工作票制度","B":"工作许可制度","C":"工作监护制度","D":"工作终结和恢复送电制度","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"119","题型":"多选","题目":"雷电天气时，不应测量( )、( )及( )。","A":"接地电阻","B":"绝缘电阻","C":"进行高压侧核相工作","D":"高压电阻","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"120","题型":"多选","题目":"室外工作，如遇雷、雨、风等恶劣天气或其他可能危及作业人员安全的情况时，( )根据实际情况，有权决定临时停止工作。","A":"上级领导","B":"工作负责人","C":"专责监护人","D":"政府部门","E":"","F":"","正确答案":"BC","解析":"无","分类":""},{"题号":"121","题型":"多选","题目":"变压器油的主要作用是( )。","A":"使金属得到防腐","B":"润滑","C":"绝缘","D":"散热","E":"","F":"","正确答案":"CD","解析":"无","分类":""},{"题号":"122","题型":"多选","题目":"定检的安全工具有( )。","A":"安全帽","B":"绝缘剪刀","C":"10kV验电器","D":"登高脚踏板","E":"","F":"","正确答案":"ACD","解析":"无","分类":""},{"题号":"123","题型":"多选","题目":"电力设施是指应用到电力系统中的( )有关设备的总称。","A":"发电","B":"变电","C":"输电","D":"配电和供电","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"124","题型":"多选","题目":"在电气设备上工作时，保证安全的技术措施包括( )。","A":"停电","B":"验电","C":"接地","D":"悬挂标志牌和装设遮栏（围栏）","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"125","题型":"多选","题目":"环网柜应在( )后，方可打开柜门","A":"停电","B":"带电","C":"验电","D":"合上接地刀闸","E":"","F":"","正确答案":"ACD","解析":"无","分类":""},{"题号":"126","题型":"多选","题目":"操作票要填写设备双重名称，即设备的( )。","A":"名称","B":"编号","C":"生产日期","D":"出厂编号","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"127","题型":"多选","题目":"操作票位置术语：合闸位置是指( )合上后的位置。","A":"断路器","B":"负荷开关","C":"刀闸","D":"二次回路开关","E":"","F":"","正确答案":"ABD","解析":"无","分类":""},{"题号":"128","题型":"多选","题目":"配电变压器并列运行的条件：","A":"电压比相同；","B":"短路阻抗差不超出10％；","C":"绕组联结组标号相同；","D":"容量比应在0.5～2之间。","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"129","题型":"多选","题目":"常用事故处理操作有：( )。","A":"试送","B":"强送","C":"限电","D":"拉闸限电","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"130","题型":"多选","题目":"电气设备的双重命名(称号)是指( )。","A":"电气设备中文名称","B":"电气设备编号","C":"设备代号","D":"英文名称","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"131","题型":"多选","题目":"( )可带负荷分合。","A":"负荷开关","B":"隔离开关","C":"真空断路器","D":"SF6断路器","E":"","F":"","正确答案":"ACD","解析":"无","分类":""},{"题号":"132","题型":"多选","题目":"操作票执行包括以下内容( )。","A":"填写操作票","B":"审查操作票","C":"执行操作票","D":"结束操作票","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"133","题型":"多选","题目":"倒闸操作应坚持操作之前“三对照”是指( )。","A":"对照工作奖惩规定","B":"对照操作任务和运行方式填写操作票","C":"对照模拟图审查操作票并预演","D":"对照设备名称和编号无误后再操作","E":"","F":"","正确答案":"BCD","解析":"无","分类":""},{"题号":"134","题型":"多选","题目":"按《广东电网公司电气操作票管理规定》，操作票出现下列( )情形之一的，应定性为不规范票。","A":"字迹不清、涂改","B":"操作票中未按规定使用操作术语","C":"操作票未按规定使用操作术语进行填写，但意思相同","D":"电脑打印操作票不按规定标准打印","E":"","F":"","正确答案":"CD","解析":"无","分类":""},{"题号":"135","题型":"多选","题目":"《广东电网公司电气操作票管理规定》发生危及人身安全的情况下，事故处理的操作包括将故障设备( )。","A":"转热备用","B":"转冷备用","C":"转检修","D":"转运行","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"136","题型":"多选","题目":"操作票考核内容包括操作票( )和违反操作票相关规定等方面。","A":"未执行率","B":"规范率","C":"合格率","D":"作废率","E":"","F":"","正确答案":"BC","解析":"无","分类":""},{"题号":"137","题型":"多选","题目":"操作票中必须填写操作的( )。","A":"开始日期","B":"结束日期","C":"发令时间","D":"完成时间","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"138","题型":"多选","题目":"操作人员的资格取得，应参加地区供电局人力资源部组织进行的( )。","A":"现场培训","B":"统一资格考试","C":"理论学习","D":"操作比赛","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"139","题型":"多选","题目":"运行部门检查评价操作票的标准按操作票( )标准进行。","A":"不合格","B":"规范","C":"不规范","D":"作废","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"140","题型":"多选","题目":"运行部门是操作票的执行部门，其职责包括( )。","A":"严格执行操作票有关规程制度","B":"编制典型操作票和现场运行操作细则","C":"组织人员参加有关的资格考试","D":"定期汇总、统计、分析、上报操作票的执行情况","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"141","题型":"多选","题目":"双重称号是指同杆架设两回及以上线路的( )。","A":"位置称号","B":"电压等级","C":"线路类型","D":"名称","E":"","F":"","正确答案":"AD","解析":"无","分类":""},{"题号":"142","题型":"多选","题目":"以下工作不需办理工作票，但应以书面形式布置和做好记录：( )。","A":"存在人身风险的低压配电网不停电的工作","B":"对高压配电网配电开关柜进行带电局部放电测试工作","C":"测量线路接地电阻工作","D":"设备运维单位进行低压配电网停电的工作","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"143","题型":"多选","题目":"依据《中国南方电网有限责任公司电力安全工作规程》工作许可的一般规定，工作许可可采用以下命令方式：( )。","A":"当面下达","B":"电话下达","C":"派人送达","D":"信息系统下达","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"144","题型":"多选","题目":"依据《中国南方电网有限责任公司电力安全工作规程》工作许可的相关规定，应以手触试的设备包括：( )。","A":"厂站内的电压等级在35kV及以下、高度在2m以下的一次设备导体部分","B":"使用厂站工作票的高压配电设备（环网柜和电缆分支箱除外）","C":"厂站内的电压等级在110kV及以下、高度在2m以下的一次设备导体部分","D":"厂站内的电压等级在35kV及以下、高度在1.5m以下的一次设备导体部分","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"145","题型":"多选","题目":"检修工作结束以前，若需将设备试加工作电压，应满足以下条件方可由运行人员进行加压试验。( )","A":"全体作业人员撤离工作地点。","B":"拆除临时遮栏、接地线和标志牌，恢复常设遮栏。","C":"收回所有相关设备的工作票。","D":"工作负责人和工作许可人全面检查无误。","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"146","题型":"多选","题目":"工作终结是指( )的终结或书面形式布置和记录的终结。","A":"工作票","B":"调度检修申请单","C":"二次措施单","D":"安全技术交底单","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"147","题型":"多选","题目":"工作终结的报告应简明扼要，内容包括( )。","A":"检修过程","B":"工作负责人姓名","C":"工作地点所挂的接地线已全部拆除","D":"线路上已无本班组工作人员","E":"","F":"","正确答案":"BCD","解析":"无","分类":""},{"题号":"148","题型":"多选","题目":"设备缺陷按照严重程度分( )","A":"紧急缺陷","B":"重大缺陷","C":"一般缺陷","D":"其他缺陷","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"149","题型":"多选","题目":"月度生产计划制定依据包括但不限于以下：( )。","A":"年度生产计划。","B":"上月未完成的工作。","C":"消缺检修计划、测试及检测计划、现场验收计划、保供电任务等。","D":"上级下达的生产指令和其他工作任务。","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"150","题型":"多选","题目":"设备差异化运维策略分为( )几类。","A":"定期巡维","B":"特殊巡维","C":"预试定检","D":"设备消缺","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"151","题型":"多选","题目":"工作计划应包括以下内容：","A":"现场验收计划","B":"日常巡维计划。","C":"预试定检计划。","D":"设备消缺计划。","E":"","F":"","正确答案":"BCD","解析":"无","分类":""},{"题号":"152","题型":"多选","题目":"操作解锁包括","A":"正常操作解锁","B":"事故操作解锁","C":"运行操作闭锁","D":"退出操作闭锁","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"153","题型":"多选","题目":"防止电气误操作三懂二会中的三懂指","A":"懂防误装置的原理","B":"懂性能","C":"懂结构","D":"懂操作","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"154","题型":"多选","题目":"可操作设备的标志牌必须面向操作者，其它设备标志牌面向巡视通道，位置高度以方便( )为原则。","A":"操作","B":"巡视","C":"检修","D":"更换","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"155","题型":"多选","题目":"使安全色更加醒目的反衬色，包括( )两种颜色。","A":"黑","B":"白","C":"红","D":"黄","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"156","题型":"多选","题目":"消火栓箱前面应标注( )等","A":"消火栓","B":"火警电话","C":"负责人","D":"编号","E":"","F":"","正确答案":"ABD","解析":"无","分类":""},{"题号":"157","题型":"多选","题目":"安全帽不应存放在( )等处所，更不可和硬物存放在一起。","A":"酸","B":"碱","C":"高温","D":"日晒","E":"潮湿","F":"","正确答案":"ABCDE","解析":"无","分类":""},{"题号":"158","题型":"多选","题目":"“禁止攀登、高压危险”标志牌应设置：","A":"设置在架空输电线路杆塔脚钉或爬梯\n侧","B":"设置在台架变上，可挂于主、副杆上及\n槽钢底的行人易见位置，也可使用支架\n安装","C":"设置在户外电缆保护管或电缆支架上","D":"标志牌底边距地面2.5～3.5m","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"159","题型":"多选","题目":"为便于现场工作人员开展工作，服装要求面料( )。","A":"耐磨","B":"安全","C":"轻便","D":"美观","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"160","题型":"多选","题目":"触电急救应分秒必争，一经明确伤员( )停止的，立即就地迅速用心肺复苏法进行抢救。","A":"心跳","B":"身体动作","C":"呼吸","D":"意识","E":"","F":"","正确答案":"AC","解析":"无","分类":""},{"题号":"161","题型":"多选","题目":"当判断伤员神志昏迷、心跳停止，呼吸存在，对其救治的措施为( )。","A":"静卧、保暖、严密观察","B":"胸外心脏按压术","C":"人工呼吸","D":"胸外按压和人工呼吸同时进行","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"162","题型":"多选","题目":"导线搭落在触电者身上，这时可用( )挑开导线。","A":"干燥的木棒","B":"干燥的竹竿","C":"绝缘棒","D":"金属杆","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"163","题型":"多选","题目":"“假死”(即所谓电休克)症状的判定方法是( )。","A":"看","B":"听","C":"试","D":"踢","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"164","题型":"多选","题目":"心肺复苏法是支持生命的三项基本措施，即：( )。","A":"通畅气道","B":"口对口(鼻)人工呼吸","C":"胸外按压","D":"针灸","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"165","题型":"多选","题目":"( )宜配备急救箱，存放急救用品，并应指定专人经常检查、补充或更换。","A":"高压配电室","B":"经常有人工作的场所","C":"车间(工区)","D":"施工车辆上","E":"","F":"","正确答案":"BD","解析":"无","分类":""},{"题号":"166","题型":"多选","题目":"当发现有以下之状况時应立即送医处理，不可自行处理，以免造成其它伤害。( )","A":"动脉出血","B":"无法控制的出血现象","C":"伤口深及肌肉，骨骼或伤口很深很宽，或位于关节上","D":"有穿刺物在体表或体内","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"167","题型":"多选","题目":"烈日直射头部，环境温度过高，( )等可以引起中暑现象。","A":"饮水过少","B":"出汗过多","C":"饮水过多","D":"出汗过少","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"168","题型":"多选","题目":"电气火灾显著特点：( )。","A":"着火的电气设备可能带电","B":"充油设备一旦着火，可能发生喷油甚至爆炸事故","C":"产生浓烟","D":"产生高温","E":"","F":"","正确答案":"AB","解析":"无","分类":""},{"题号":"169","题型":"多选","题目":"电气灭火主要采用( )。","A":"隔离法","B":"窒息法","C":"冷却法","D":"抑制法","E":"","F":"","正确答案":"ABCD","解析":"无","分类":""},{"题号":"170","题型":"多选","题目":"辨识某一具体作业活动的危险源时，应从( )三个角度考虑。","A":"伤害自己","B":"伤害别人","C":"被别人伤害","D":"恶性误操作","E":"","F":"","正确答案":"ABC","解析":"无","分类":""},{"题号":"171","题型":"多选","题目":"担任专责监护人的基本条件包括：( )。","A":"具有相关工作经验","B":"熟悉设备情况","C":"必须是技术人员","D":"熟悉《安规》","E":"熟悉工作班人员情况","F":"","正确答案":"ABD","解析":"无","分类":""},{"题号":"172","题型":"多选","题目":"风险等级可分为：( )。","A":"特高","B":"高","C":"中","D":"低","E":"可接受","F":"","正确答案":"ABCDE","解析":"无","分类":""},{"题号":"173","题型":"判断","题目":"适用无人机分类中起飞全重在20千克，是属于Ⅲ类无人机","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"174","题型":"判断","题目":"无人机云系统，是指轻小民用无人机运行动态数据库系统，用于向无人机用户提供航行服务、气象服务等，对民用无人机运行数据（不包括运营信息、位置、高度和速度等）进行实时监测","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"175","题型":"判断","题目":"持有驾驶员执照的无人机驾驶员必须持有中国民用航空规章《民用航空人员体检合格证管理规则》（CCAR-67FS）颁发的有效体检合格证，并妥善保管无须随身携带","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"176","题型":"判断","题目":"无人机驾驶员飞行前检查不少于4小时，正常飞行程序操作不少于20小时，应急飞行程序操作包括发动机故障、链路丢失、应急回收、迫降等，不少于20小时","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"177","题型":"判断","题目":"航空知识中气象学，包括识别临界天气状况，获得气象资料的程序以及航空天气报告和预报的使用。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"178","题型":"判断","题目":"行业协会对无人机系统驾驶员的管理要求，行业协会每3个月须向局方提交报告，内容包括训练情况、技术进步情况、遇到的困难和问题、事故和事故征候、训练合格证统计信息等","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"179","题型":"判断","题目":"在飞行中遇到需要立即处置的紧急情况时，机长可以在保证地面人员安全所需要的范围内偏离《轻小无人机运行规定》的任何规定","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"180","题型":"判断","题目":"视距内飞行可在夜间运行","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"181","题型":"判断","题目":"民用无人机驾驶员在饮用任何含酒精的液体之后的6小时之内，若感觉酒醒后，可以驾驶无人机","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"182","题型":"判断","题目":"《轻小无人机运行规定》适用于无线电操作的航空模型","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"183","题型":"判断","题目":"《轻小无人机运行规定》不适用于室内、拦网内等隔离空间运行无人机","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"184","题型":"判断","题目":"操作中有疑问时，可自行更改操作票后进行操作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"185","题型":"判断","题目":"操作临时变更时，应按实际情况修改操作票方可继续进行倒闸操作。( )","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"186","题型":"判断","题目":"单人巡视时，可以攀登电杆和铁塔。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"187","题型":"判断","题目":"杆塔上有人工作时，为不影响塔上人员工作，必要时应调整或拆除拉线。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"188","题型":"判断","题目":"工作票存在安全措施不足的情况，应重新填写工作票。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"189","题型":"判断","题目":"紧线、撤线前，应先检查拉线、拉桩及杆根。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"190","题型":"判断","题目":"安全带的安全绳同主带的连接点应固定于佩戴者的后背、后腰或前胸。( )","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"191","题型":"判断","题目":"在电气设备上工作时，保证安全的技术措施由运行人员或有相应资格的人员执行，但无需监护人在场。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"192","题型":"判断","题目":"使用同一张工作票开展的分区段依次进行的停电检修工作，工作班自行装设的接地线等安全措施可分段执行。( )","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"193","题型":"判断","题目":"新参加电气工作的人员经过安全知识教育后，可以单独工作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"194","题型":"判断","题目":"一组操作人员可以同时持有多个操作任务的现场电气操作票进行操作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"195","题型":"判断","题目":"作业点在带电杆塔上最下层导线以下，与带电导线距离大于表1规定的作业安全距离的线路接地电阻测量、涂写杆塔号、装拆标志牌、补装塔材等工作，应选用书面布置记录票","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"196","题型":"判断","题目":"在进行操作的过程中，遇有断路器跳闸时，应继续操作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"197","题型":"判断","题目":"变压器跳闸是由于内部故障所引起，可重新投入运行。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"198","题型":"判断","题目":"操作票是进行电气操作的书面依据。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"199","题型":"判断","题目":"电气操作是指将电气设备状态进行转换，一次系统运行方式变更等所进行的操作执行过程的总称。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"200","题型":"判断","题目":"热备用状态是指连接该设备的各侧均无安全措施，且连接该设备的各侧均有明显断开点或可判断的断开点。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"201","题型":"判断","题目":"事故处理必须填用操作票。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"202","题型":"判断","题目":"一个操作项目栏内只有一个受令单位。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"203","题型":"判断","题目":"在运行状态下设备的保护和自动装置、控制、合阐及信号电源等均应退出。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"204","题型":"判断","题目":"重合闸不成功是指断路器跳闸后，重合闸装置动作，断路器自动合上的过程。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"205","题型":"判断","题目":"电气倒闸操作应由两人执行，一人监护，一人操作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"206","题型":"判断","题目":"变压器停电操作：先停电源侧，后停负荷侧。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"207","题型":"判断","题目":"操作监护就是由专人监护操作人操作的正确性和人身安全，一旦发生错误操作或危及人身安全时，能及时给予纠正和制止。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"208","题型":"判断","题目":"典型操作票只作为填票的参考，填写操作票时必须符合实际工作任务和现场安全措施布置要求，填票人员不得生搬硬套。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"209","题型":"判断","题目":"发布和接受操作指令时，必须互报单位、姓名，使用规范术语，严格执行复诵、录音制度。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"210","题型":"判断","题目":"进行操作时，操作人员可以一边操作，一边接听与操作无关的电话。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"211","题型":"判断","题目":"禁止用隔离开关拉合带负荷设备或带负荷线路，可以用隔离开关拉开，合上无故障的空载主变压器。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"212","题型":"判断","题目":"可直接在地面操作的断路器、负荷开关、隔离开关操作完后应在操作机构上加锁。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"213","题型":"判断","题目":"送电时，先合上线路侧刀闸，再合上母线侧刀闸，最后合上开关，停电顺序相反，严禁带负荷拉、合刀闸。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"214","题型":"判断","题目":"在进行操作的过程中，遇有负荷开关跳闸时，应暂停操作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"215","题型":"判断","题目":"按《中国南方电网有限责任公司电气操作导则》，发生危及电网及设备安全的情况下，事故处理的紧急操作仅限于断路器的操作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"216","题型":"判断","题目":"登杆进行倒闸操作时，操作人员可以不戴安全帽，但必须使用安全带。( )","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"217","题型":"判断","题目":"按《中国南方电网有限责任公司电气操作票管理规定》》操作票的考核，对未执行和作废操作票不纳入统计，但仍需按要求归档保存。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"218","题型":"判断","题目":"按《广东电网公司电气操作票管理规定》，操作票管理情况是作为本单位年度生产作业指标的考核指标之一。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"219","题型":"判断","题目":"按《中国南方电网有限责任公司电气操作票管理规定》，操作票未按规定使用操作术语进行填写，但意思相同属不合格票。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"220","题型":"判断","题目":"按《中国南方电网有限责任公司电气操作票管理规定》，操作票中有签名，但签名不完整、不正确属不规范票。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"221","题型":"判断","题目":"按《中国南方电网有限责任公司电气操作导则》，地区供电局办公室负责组织审查、考核、公布电气操作人的资格。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"222","题型":"判断","题目":"按《中国南方电网有限责任公司电气操作导则》，其他岗位人员因工作需要转为操作人员岗位时，由运行单位进行岗位调整并报上级人力资源部备案、公布。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"223","题型":"判断","题目":"按《中国南方电网有限责任公司电气操作导则》，填写操作票时必须符合实际工作任务和现场安全措施布置要求。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"224","题型":"判断","题目":"操作票的保存应使用统一封面装订，操作票不得遗失。对涉及事故调查的操作票要作为事故资料保存。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"225","题型":"判断","题目":"操作人员因违反“两票”制度或安全规章制度被取消相应资格的，考核期限后不必重新考试合格即可从事相应资格工作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"226","题型":"判断","题目":"拉开或拆出全回路仅有的一组接地开关地线，不需要用操作票。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"227","题型":"判断","题目":"配电线路操作票“两审”制度是操作票填写人自审和监护人复审。( )","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"228","题型":"判断","题目":"已执行、未执行和作废的操作票不必要分类放置。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"229","题型":"判断","题目":"在操作票的操作任务栏内，应写明操作设备的名称和编号。( )","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"230","题型":"判断","题目":"工作票中的关键词不应有错漏，否则应重新填写。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"231","题型":"判断","题目":"《线路第一种工作票》填写规范：工作负责人及工作班人员总人数共几人填写，不包括工作负责人在内的所有工作人员的总数。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"232","题型":"判断","题目":"《线路第一种工作票》填写规范：计划工作时间应在调度批准的停电检修时间范围内，包括设备停送电操作所需的时间。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"233","题型":"判断","题目":"《线路第一种工作票》填写规范：应装设的接地线栏，填写配电运行单位负责组织实施的工作接地线的线路电压等级、名称和杆塔号（或电缆终端编号），及具体的位置（大号侧或小号侧）。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"234","题型":"判断","题目":"工作票凡涉及填写人数、张数、组数等数字的，应填写中文数字。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"235","题型":"判断","题目":"工作负责人必须始终在工作现场，对工作班人员的安全认真监护，及时纠正违反安全的行为。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"236","题型":"判断","题目":"热备用状态是指线路两侧断路器、隔离开关都在断开位置，线路与变电站带电部位有明显断开点。但线路本身处于完好状态。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"237","题型":"判断","题目":"填写工作票应对照接线图或模拟图板，填写设备名称、编号应与现场实际的名称和编号相符合。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"238","题型":"判断","题目":"在安全措施可靠，工作人员不致误碰导电部位的情况下，一个工作负责人可以同时办理两张工作票。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"239","题型":"判断","题目":"工作中如遇雷、雨、暴风等恶劣天气或其他任何威胁到工作人员安全的情况时，工作负责人有权决定停止工作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"240","题型":"判断","题目":"灾后抢修只确认设备状态符合抢修安全措施要求，可以不办理紧急抢修工作票或相应的工作票。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"241","题型":"判断","题目":"亲自并正确完整地填写工作票是工作票签发人的安全责任。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"242","题型":"判断","题目":"工作票会签人须审核工作票所列安全措施是否正确完备。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"243","题型":"判断","题目":"值班负责人的安全责任包括审查检修工期是否与批准期限相符。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"244","题型":"判断","题目":"依据《中国南方电网有限责任公司电力安全工作规程》，线路工作许可人的安全责任包括确认调度负责的安全措施已布置完成或已具备恢复条件。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"245","题型":"判断","题目":"工作票签发人、工作票会签人应由熟悉人员安全技能与技术水平，具有相关工作经历、经验丰富的生产管理人员、技术人员、技能人员担任。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"246","题型":"判断","题目":"工作许可人可不具有相应且足够的工作经验，但需熟悉工作范围及相关设备的情况。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"247","题型":"判断","题目":"灾后抢修工作可选用紧急抢修工作票。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"248","题型":"判断","题目":"依据《中国南方电网有限责任公司电力安全工作规程》，工作票由工作票签发人审核无误后签发。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"249","题型":"判断","题目":"依据《中国南方电网有限责任公司电力安全工作规程》，工作许可可采用短信传达。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"250","题型":"判断","题目":"依据《中国南方电网有限责任公司电力安全工作规程》，传真方式送达的工作票许可应待正式工作票到达后履行。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"251","题型":"判断","题目":"填用线路第一种工作票的工作，工作负责人应在得到工作许可人的许可后，方可开始工作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"252","题型":"判断","题目":"依据《中国南方电网有限责任公司电力安全工作规程》，若一张工作票设多个分组工作，分组工作负责人即为该分组的监护人。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"253","题型":"判断","题目":"工作间断时，工作班人员应从工作现场撤出，只要所有安全措施保持不变，复工前可不用检查，直接开始工作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"254","题型":"判断","题目":"工作期间，原工作负责人返回工作现场时，也应履行同样的交接手续。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"255","题型":"判断","题目":"新加入的作业人员，工作负责人应对其进行安全交代。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"256","题型":"判断","题目":"除紧急抢修工作票之外的工作票只能延期一次。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"257","题型":"判断","题目":"末级工作许可人办理线路工作票的作业终结，可先办理作业终结手续，再与工作负责人核实情况。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"258","题型":"判断","题目":"执行操作票应逐项进行，严禁跳项、漏项、越项操作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"259","题型":"判断","题目":"现场电气操作严禁误入带电间隔。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"260","题型":"判断","题目":"配电线路及设备的注意状态：表示配电设备有一般缺陷，可以正常运行","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"261","题型":"判断","题目":"周生产计划由配电运行部门制定，明确完成时间和要求，并将计划落实到个人。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"262","题型":"判断","题目":"为控制由于自动化功能带来的作业风险，配电运行部门运维人员应熟悉和掌握配电自动化终端设备功能原理及操作方法。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"263","题型":"判断","题目":"220V两相供电电压允许偏差为额定电压的+7%、-10%。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"264","题型":"判断","题目":"变压器的三相负荷应力求平衡，不平衡度不应大于15％。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"265","题型":"判断","题目":"加强防风拉线运行管理。每年4月前，应完成防风拉线装置专项检查。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"266","题型":"判断","题目":"巡维计划可分为日常巡维计划、特殊巡维计划、专项检测计划。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"267","题型":"判断","题目":"监察巡视由班组长组织进行的巡视工作，了解线路及设备运行状况，检查、指导巡视人员的工作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"268","题型":"判断","题目":"配电管理部门应对新建配电线路、设备及设施的交接试验结果严格审查把关。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"269","题型":"判断","题目":"配电运行部门应制定故障抢修处理原则，应视故障大小或路程远近情况，突出重点，有序处理。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"270","题型":"判断","题目":"可操作设备的标志牌必须面向操作者，其它设备标志牌面向巡视通道，位置高度以方便操作、巡视、检修、更换为原则。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"271","题型":"判断","题目":"安全标志牌应设在与安全有关的醒目地方，并使人们看见后，有足够的时间来注意它所表示的内容。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"272","题型":"判断","题目":"安全标志牌设置的高度尽量与人眼的视线高度相一致，悬挂式和柱式的环境信息标志牌的下缘距地面的高度不宜小于2.5m，局部信息标志的设置高度应视具体情况确定。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"273","题型":"判断","题目":"禁止标志的含义是禁止人们不安全行为的图形标志。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"274","题型":"判断","题目":"指令标志的基本含义是提示人们必须做出某种动作或采用防范措施的图形标志","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"275","题型":"判断","题目":"在标志远离指示物时，必须联用方向辅助标志。如果标志与其指示物很近，人们一眼即可看到标志的指示物，方向辅助标志可以省略。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"276","题型":"判断","题目":"消防水管道应刷涂白色油漆，用红色标志流向及介质名称","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"277","题型":"判断","题目":"当电缆线路附近有填土作业时，可在PVC电缆警示桩侧插彩旗。当电缆线路在顶管路径范围内时，应在顶管路径与电缆路径交叉跨越处安装PVC电缆警示桩和法律法规宣传牌。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"278","题型":"判断","题目":"把开关安装在零线上,断开了开关，人身触及的导线就不会带电。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"279","题型":"判断","题目":"触电急救，首先是要切断电源。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"280","题型":"判断","题目":"触电急救，首先要使触电者迅速脱离电源，越快越好。因为电流作用的时间越长，伤害越重。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"281","题型":"判断","题目":"触电死亡事故致命电流较小。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"282","题型":"判断","题目":"触电者触及断落在地上的带电高压导线，救护人应马上进入断线范围内进行救治。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"283","题型":"判断","题目":"触电者如牙关紧闭，可改行口对鼻人工呼吸。吹气时要将触电者嘴唇打开。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"284","题型":"判断","题目":"现场创伤急救技术包括人工呼吸，心脏复苏，止血，包扎，骨折临时固定，伤员搬运。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"285","题型":"判断","题目":"心肺复苏法支持生命的三项基本措施是：(通畅气道、口对口(鼻)人工呼吸、胸外按压)。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"286","题型":"判断","题目":"一下肢骨折时，可将双下肢绑在一起进行固定。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"287","题型":"判断","题目":"以冰块和弹性绷带控制出血量，冰块可以减缓血流，而在伤处绑上弹性绷带，即加压在伤口上，可使血流量減少。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"288","题型":"判断","题目":"只有医生有权做出伤员死亡的诊断。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"289","题型":"判断","题目":"遇有电气设备着火时，应立即将有关设备的电源切断。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"290","题型":"判断","题目":"变、配电站及发电厂遇有电气设备着火时，应立即进行救火。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"291","题型":"判断","题目":"不带电的注油设备可以使用泡沫灭火器灭火。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"292","题型":"判断","题目":"当灭火人员身上着火时，可用灭火器直接朝灭火人员身上喷射。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"293","题型":"判断","题目":"电气设备着火可用冷水浇灭。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"B","解析":"无","分类":""},{"题号":"294","题型":"判断","题目":"对于旋转电器不准使用泡沫灭火器和砂土灭火。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"295","题型":"判断","题目":"发生火灾后，拉闸时应使用绝缘工具操作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""},{"题号":"296","题型":"判断","题目":"班前会班长应检查员工的精神面貌、个人着装、个人使用的工器具，不合格者不许参与现场工作。","A":"正确","B":"错误","C":"","D":"","E":"","F":"","正确答案":"A","解析":"无","分类":""}];
+const OPTION_KEYS=["A","B","C","D","E","F"];
+const TYPES=["单选","多选","判断","填空"];
+
+let allQuestions=ALL_QUESTIONS;
+let activeQuestions=[...allQuestions];
+let currentIndex=0;
+let currentMode="all";
+const modeTypeFilters={all:"全部",memo:"全部"};
+const answerStates=new Map();
+
+let searchMatches=[];
+let searchQuery="";
+let searchAnswerVisible=false;
+
+let practiceProgress={};
+let memoVisited=new Set();
+let modePositions={};
+let collectionStudyModes={wrong:"practice",fav:"practice"};
+let orderModes={};
+let shuffleOrders={};
+let appInitialized=false;
+
+let examQuestions=[];
+let examStates=new Map();
+let examScoreMap=new Map();
+let examSubmitted=false;
+
+const el=id=>document.getElementById(id);
+const card=el("questionCard");
+const emptyMode=el("emptyMode");
+const qMeta=el("qMeta");
+const qCategory=el("qCategory");
+const qTitle=el("qTitle");
+const answerArea=el("answerArea");
+const submitBtn=el("submitBtn");
+const prevBtn=el("prevBtn");
+const nextBtn=el("nextBtn");
+const resultBox=el("result");
+const progress=el("progress");
+const starBtn=el("starBtn");
+const practiceActions=el("practiceActions");
+const wrongManageActions=el("wrongManageActions");
+const memoActions=el("memoActions");
+const examActions=el("examActions");
+const examSetup=el("examSetup");
+const examSummary=el("examSummary");
+const typeFilterPanel=el("typeFilterPanel");
+const typeFilters=el("typeFilters");
+const typeFilterTitle=el("typeFilterTitle");
+const reviewModePanel=el("reviewModePanel");
+const reviewModeTitle=el("reviewModeTitle");
+const reviewModeTip=el("reviewModeTip");
+const reviewModeButtons=el("reviewModeButtons");
+const orderModePanel=el("orderModePanel");
+const orderModeTip=el("orderModeTip");
+const orderModeButtons=el("orderModeButtons");
+const searchInput=el("searchInput");
+const clearSearchBtn=el("clearSearchBtn");
+const searchInfo=el("searchInfo");
+const searchResults=el("searchResults");
+const searchViewActions=el("searchViewActions");
+const overviewBar=el("overviewBar");
+const overviewInlineSummary=el("overviewInlineSummary");
+const overviewModal=el("overviewModal");
+const overviewModalSummary=el("overviewModalSummary");
+const overviewLegend=el("overviewLegend");
+const qnumGrid=el("qnumGrid");
+const resetProgressBtn=el("resetProgressBtn");
+
+function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function qid(q){return String(q["题号"])}
+
+function normalizeJudgeToken(v){
+  const raw=String(v??"").trim();
+  const s=raw.toUpperCase().replace(/\s+/g,"");
+
+  if(["对","正确","TRUE","T","√","是","YES","Y"].includes(s))return"对";
+  if(["错","错误","FALSE","F","×","X","否","NO","N"].includes(s))return"错";
+
+  return "";
+}
+
+function extractSingleChoiceLetter(v){
+  const s=String(v??"")
+    .trim()
+    .toUpperCase()
+    .replace(/[\s\.．、:：]/g,"");
+
+  return /^[A-F]$/.test(s)?s:"";
+}
+
+function normalizeChoiceAnswer(a,t,q=null){
+  if(t==="判断"){
+    // 先处理直接写“对/错、正确/错误、TRUE/FALSE”等情况。
+    const direct=normalizeJudgeToken(a);
+    if(direct)return direct;
+
+    // 兼容“正确答案=A/B，但 A/B 选项文字才是 正确/错误”的题库。
+    // 不假设 A 一定代表正确、B 一定代表错误，而是读取实际选项文字。
+    const letter=extractSingleChoiceLetter(a);
+    if(letter&&q){
+      const mapped=normalizeJudgeToken(q[letter]);
+      if(mapped)return mapped;
+    }
+
+    // 无法可靠映射时保留原值，让异常显式暴露，而不是擅自猜测。
+    return String(a??"").trim().toUpperCase();
+  }
+
+  const s=String(a??"").trim().toUpperCase();
+  return [...new Set((s.match(/[A-F]/g)||[]))].sort().join("");
+}
+
+function splitBlankAnswers(a){return String(a??"").split("||").map(v=>v.trim())}
+function normalizeBlankText(v){return String(v??"").replace(/\u3000/g," ").trim().replace(/\s+/g," ").toLowerCase()}
+
+function storageKey(k){return`tiyan_share_${k}_${BANK_TITLE.replace(/\s+/g,"_")}`}
+function loadSet(k){try{return new Set(JSON.parse(localStorage.getItem(storageKey(k))||"[]").map(String))}catch{return new Set()}}
+function saveSet(k,s){localStorage.setItem(storageKey(k),JSON.stringify([...s]))}
+
+function bankSafeKey(){
+  return BANK_TITLE.replace(/\s+/g,"_");
+}
+
+function practiceProgressKey(){
+  return `tiyan_share_progress_${bankSafeKey()}`;
+}
+
+function loadPracticeProgress(){
+  try{
+    const obj=JSON.parse(localStorage.getItem(practiceProgressKey())||"{}");
+    return obj&&typeof obj==="object"&&!Array.isArray(obj)?obj:{};
+  }catch{
+    return {};
+  }
+}
+
+function savePracticeProgress(){
+  localStorage.setItem(practiceProgressKey(),JSON.stringify(practiceProgress));
+}
+
+function markPracticeProgress(q,ok){
+  practiceProgress[qid(q)]=ok?"ok":"bad";
+  savePracticeProgress();
+}
+
+function storedProgressStatus(q){
+  return practiceProgress[qid(q)]||"";
+}
+
+function memoVisitedKey(){
+  return `tiyan_share_memo_visited_${bankSafeKey()}`;
+}
+
+function loadMemoVisited(){
+  try{
+    return new Set(JSON.parse(localStorage.getItem(memoVisitedKey())||"[]").map(String));
+  }catch{
+    return new Set();
+  }
+}
+
+function saveMemoVisited(){
+  localStorage.setItem(memoVisitedKey(),JSON.stringify([...memoVisited]));
+}
+
+function markMemoVisited(q){
+  const id=qid(q);
+  if(memoVisited.has(id))return;
+  memoVisited.add(id);
+  saveMemoVisited();
+}
+
+function isMemoVisited(q){
+  return memoVisited.has(qid(q));
+}
+
+function typeFilterStorageKey(mode){
+  return `tiyan_share_typefilter_${mode}_${bankSafeKey()}`;
+}
+
+function loadStoredTypeFilter(mode){
+  try{
+    return localStorage.getItem(typeFilterStorageKey(mode))||"全部";
+  }catch{
+    return "全部";
+  }
+}
+
+function saveStoredTypeFilter(mode){
+  if(mode!=="all"&&mode!=="memo")return;
+  localStorage.setItem(typeFilterStorageKey(mode),modeTypeFilters[mode]||"全部");
+}
+
+function positionContext(mode=currentMode){
+  const range=trainingRangeContext(mode);
+  if(!range)return "";
+
+  const order=orderModes[range]||"sequence";
+  return `${range}:${order}`;
+}
+
+function positionMapStorageKey(){
+  return `tiyan_share_positions_v2_${bankSafeKey()}`;
+}
+
+function legacyPositionStorageKey(ctx){
+  return `tiyan_share_position_${bankSafeKey()}_${ctx}`;
+}
+
+function loadModePositions(){
+  let map={};
+
+  try{
+    const raw=JSON.parse(localStorage.getItem(positionMapStorageKey())||"{}");
+    if(raw&&typeof raw==="object"&&!Array.isArray(raw)){
+      map=raw;
+    }
+  }catch{}
+
+  let migrated=false;
+
+  const oldRanges=[
+    "all:全部","memo:全部",
+    "wrong:practice","wrong:memo",
+    "fav:practice","fav:memo",
+    ...TYPES.map(t=>`all:${t}`),
+    ...TYPES.map(t=>`memo:${t}`)
+  ];
+
+  // v1.7.1 / v1.8 没有“顺序/乱序”维度，旧位置迁移为顺序训练位置。
+  oldRanges.forEach(range=>{
+    if(map[range]&&!map[`${range}:sequence`]){
+      map[`${range}:sequence`]=map[range];
+      migrated=true;
+    }
+  });
+
+  if(map["wrong"]&&!map["wrong:practice:sequence"]){
+    map["wrong:practice:sequence"]=map["wrong"];
+    migrated=true;
+  }
+  if(map["fav"]&&!map["fav:practice:sequence"]){
+    map["fav:practice:sequence"]=map["fav"];
+    migrated=true;
+  }
+
+  // 更旧版本使用单独 localStorage key，也迁移到顺序训练。
+  oldRanges.forEach(range=>{
+    const ctx=`${range}:sequence`;
+    if(map[ctx]&&map[ctx].qid)return;
+
+    try{
+      let oldQid=localStorage.getItem(legacyPositionStorageKey(range))||"";
+
+      if(!oldQid&&range==="wrong:practice"){
+        oldQid=localStorage.getItem(legacyPositionStorageKey("wrong"))||"";
+      }
+      if(!oldQid&&range==="fav:practice"){
+        oldQid=localStorage.getItem(legacyPositionStorageKey("fav"))||"";
+      }
+
+      if(oldQid){
+        map[ctx]={qid:String(oldQid),index:0};
+        migrated=true;
+      }
+    }catch{}
+  });
+
+  if(migrated){
+    try{
+      localStorage.setItem(positionMapStorageKey(),JSON.stringify(map));
+    }catch{}
+  }
+
+  return map;
+}
+
+function saveModePositions(){
+  try{
+    localStorage.setItem(positionMapStorageKey(),JSON.stringify(modePositions));
+  }catch{}
+}
+
+function rememberCurrentPosition(){
+  if(!appInitialized||!activeQuestions.length)return;
+
+  const ctx=positionContext();
+  if(!ctx)return;
+
+  const q=activeQuestions[currentIndex];
+  if(!q)return;
+
+  modePositions[ctx]={
+    qid:qid(q),
+    index:currentIndex
+  };
+
+  saveModePositions();
+}
+
+function restoreCurrentPosition(){
+  const ctx=positionContext();
+
+  if(!ctx||!activeQuestions.length){
+    currentIndex=0;
+    return;
+  }
+
+  const saved=modePositions[ctx];
+
+  if(!saved){
+    currentIndex=0;
+    return;
+  }
+
+  // 优先按题号恢复，题号比列表下标更稳定。
+  const byQid=activeQuestions.findIndex(q=>qid(q)===String(saved.qid));
+
+  if(byQid>=0){
+    currentIndex=byQid;
+    return;
+  }
+
+  // 错题/收藏列表会动态增删。
+  // 如果原来的题已经不在列表中，退回到之前相近的列表位置。
+  const fallback=Number(saved.index);
+  currentIndex=Number.isFinite(fallback)
+    ?Math.max(0,Math.min(fallback,activeQuestions.length-1))
+    :0;
+
+  // 立即把失效题号更新为当前有效题号。
+  const q=activeQuestions[currentIndex];
+  if(q){
+    modePositions[ctx]={
+      qid:qid(q),
+      index:currentIndex
+    };
+    saveModePositions();
+  }
+}
+
+function setCurrentQuestionIndex(index){
+  if(!activeQuestions.length){
+    currentIndex=0;
+    return;
+  }
+
+  currentIndex=Math.max(0,Math.min(index,activeQuestions.length-1));
+  rememberCurrentPosition();
+}
+
+function focusQuestionTop(behavior="smooth"){
+  requestAnimationFrame(()=>{
+    if(card&&card.style.display!=="none"){
+      card.scrollIntoView({behavior,block:"start"});
+    }
+  });
+}
+
+function isWrong(q){return loadSet("wrong").has(qid(q))}
+function isFav(q){return loadSet("fav").has(qid(q))}
+function addWrong(q){const s=loadSet("wrong");s.add(qid(q));saveSet("wrong",s)}
+function removeWrong(q){const s=loadSet("wrong");s.delete(qid(q));saveSet("wrong",s)}
+function toggleFav(q){const s=loadSet("fav"),id=qid(q);s.has(id)?s.delete(id):s.add(id);saveSet("fav",s)}
+
+function practiceAnswerContext(){
+  if(currentMode==="wrong")return "wrong";
+  if(currentMode==="fav")return "fav";
+  return "all";
+}
+
+function getPracticeState(q){
+  const k=`${practiceAnswerContext()}::${qid(q)}`;
+  if(!answerStates.has(k))answerStates.set(k,{selected:[],blanks:[],submitted:false});
+  return answerStates.get(k);
+}
+function getExamState(q){
+  const k=qid(q);
+  if(!examStates.has(k))examStates.set(k,{selected:[],blanks:[],submitted:false});
+  return examStates.get(k);
+}
+function getCurrentState(q){
+  return(
+    currentMode==="exam"
+    ||currentMode==="examReview"
+    ||currentMode==="examReviewAll"
+  )?getExamState(q):getPracticeState(q);
+}
+
+function getOptions(q){
+  if(q.题型==="判断")return[{key:"对",text:"对"},{key:"错",text:"错"}];
+  return OPTION_KEYS.filter(k=>String(q[k]??"").trim()!=="").map(k=>({key:k,text:String(q[k])}));
+}
+
+function selectedChoiceAnswer(q,s){
+  return q.题型==="判断"?(s.selected[0]||""):[...s.selected].sort().join("");
+}
+
+function isAnswerCorrect(q,s){
+  if(q.题型==="填空"){
+    const st=splitBlankAnswers(q["正确答案"]),inp=s.blanks||[];
+    if(inp.length!==st.length)return false;
+    return st.every((a,i)=>normalizeBlankText(a)===normalizeBlankText(inp[i]));
+  }
+  return selectedChoiceAnswer(q,s)===normalizeChoiceAnswer(q["正确答案"],q.题型,q);
+}
+
+function hasAnswer(q,s){
+  if(q.题型==="填空"){
+    const st=splitBlankAnswers(q["正确答案"]);
+    if((s.blanks||[]).length<st.length)return false;
+    return s.blanks.every(v=>normalizeBlankText(v)!=="");
+  }
+  return(s.selected||[]).length>0;
+}
+
+function updateCounts(){
+  el("allCount").textContent=`${allQuestions.length} 题`;
+  const ids=new Set(allQuestions.map(qid));
+  el("wrongCount").textContent=`${[...loadSet("wrong")].filter(id=>ids.has(id)).length} 题`;
+  el("favCount").textContent=`${[...loadSet("fav")].filter(id=>ids.has(id)).length} 题`;
+}
+
+function updateBankMeta(){
+  const c={};
+  TYPES.forEach(t=>c[t]=allQuestions.filter(q=>q.题型===t).length);
+  el("bankMeta").textContent=`共 ${allQuestions.length} 题｜单选 ${c["单选"]}｜多选 ${c["多选"]}｜判断 ${c["判断"]}｜填空 ${c["填空"]}`;
+}
+
+function existingTypes(){
+  return TYPES.filter(t=>allQuestions.some(q=>q.题型===t));
+}
+
+function currentTypeFilter(){
+  return modeTypeFilters[currentMode]||"全部";
+}
+
+function filteredStudyQuestions(){
+  return applyTrainingOrder(getBaseQuestionsForCurrentMode(),false);
+}
+
+function typeFilterLabel(){
+  const type=currentTypeFilter();
+  return type==="全部"?"全部题型":`${type}专项`;
+}
+
+function renderTypeFilterPanel(){
+  const visible=currentMode==="all"||currentMode==="memo";
+  typeFilterPanel.style.display=visible?"block":"none";
+  if(!visible)return;
+
+  typeFilterTitle.textContent=currentMode==="memo"
+    ?"背题范围"
+    :"刷题范围";
+
+  typeFilters.innerHTML="";
+
+  const options=[
+    {type:"全部",label:`全部题型（${allQuestions.length}）`},
+    ...existingTypes().map(type=>({
+      type,
+      label:`${type}题（${allQuestions.filter(q=>q.题型===type).length}）`
+    }))
+  ];
+
+  options.forEach(item=>{
+    const btn=document.createElement("button");
+    btn.className="type-filter-btn";
+    btn.textContent=item.label;
+    btn.classList.toggle("active",currentTypeFilter()===item.type);
+
+    btn.addEventListener("click",()=>{
+      if(currentMode!=="all"&&currentMode!=="memo")return;
+
+      rememberCurrentPosition();
+      modeTypeFilters[currentMode]=item.type;
+      saveStoredTypeFilter(currentMode);
+
+      activeQuestions=filteredStudyQuestions();
+      restoreCurrentPosition();
+
+      renderTypeFilterPanel();
+      renderOrderModePanel();
+      render();
+      focusQuestionTop();
+    });
+
+    typeFilters.appendChild(btn);
+  });
+}
+
+function trainingRangeContext(mode=currentMode){
+  if(mode==="all"||mode==="memo"){
+    return `${mode}:${modeTypeFilters[mode]||"全部"}`;
+  }
+  if(mode==="wrong"||mode==="fav"){
+    return `${mode}:${collectionStudyModes[mode]||"practice"}`;
+  }
+  return "";
+}
+
+function orderModeStorageKey(){
+  return `tiyan_share_order_modes_${bankSafeKey()}`;
+}
+
+function shuffleOrderStorageKey(){
+  return `tiyan_share_shuffle_orders_${bankSafeKey()}`;
+}
+
+function loadOrderModes(){
+  try{
+    const obj=JSON.parse(localStorage.getItem(orderModeStorageKey())||"{}");
+    return obj&&typeof obj==="object"&&!Array.isArray(obj)?obj:{};
+  }catch{
+    return {};
+  }
+}
+
+function saveOrderModes(){
+  try{
+    localStorage.setItem(orderModeStorageKey(),JSON.stringify(orderModes));
+  }catch{}
+}
+
+function loadShuffleOrders(){
+  try{
+    const obj=JSON.parse(localStorage.getItem(shuffleOrderStorageKey())||"{}");
+    return obj&&typeof obj==="object"&&!Array.isArray(obj)?obj:{};
+  }catch{
+    return {};
+  }
+}
+
+function saveShuffleOrders(){
+  try{
+    localStorage.setItem(shuffleOrderStorageKey(),JSON.stringify(shuffleOrders));
+  }catch{}
+}
+
+function currentOrderMode(){
+  const ctx=trainingRangeContext();
+  if(!ctx)return "sequence";
+  return orderModes[ctx]||"sequence";
+}
+
+function fisherYates(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function reconcileShuffleOrder(baseQuestions,ctx,force=false){
+  const ids=baseQuestions.map(q=>qid(q));
+  const valid=new Set(ids);
+
+  let order=force
+    ?[]
+    :(Array.isArray(shuffleOrders[ctx])?shuffleOrders[ctx].map(String):[]);
+
+  order=order.filter(id=>valid.has(id));
+
+  const seen=new Set(order);
+  const missing=ids.filter(id=>!seen.has(id));
+
+  if(force){
+    order=fisherYates(ids);
+  }else if(missing.length){
+    // 错题/收藏可能动态增加，新题随机追加到当前乱序轮次。
+    order.push(...fisherYates(missing));
+  }
+
+  shuffleOrders[ctx]=order;
+  saveShuffleOrders();
+  return order;
+}
+
+function getBaseQuestionsForCurrentMode(){
+  if(currentMode==="all"||currentMode==="memo"){
+    const type=modeTypeFilters[currentMode]||"全部";
+    return type==="全部"
+      ?[...allQuestions]
+      :allQuestions.filter(q=>q.题型===type);
+  }
+
+  if(currentMode==="wrong"){
+    const s=loadSet("wrong");
+    return allQuestions.filter(q=>s.has(qid(q)));
+  }
+
+  if(currentMode==="fav"){
+    const s=loadSet("fav");
+    return allQuestions.filter(q=>s.has(qid(q)));
+  }
+
+  return [...activeQuestions];
+}
+
+function applyTrainingOrder(baseQuestions,forceReshuffle=false){
+  const ctx=trainingRangeContext();
+  if(!ctx)return [...baseQuestions];
+
+  if(currentOrderMode()!=="random"){
+    return [...baseQuestions];
+  }
+
+  const order=reconcileShuffleOrder(baseQuestions,ctx,forceReshuffle);
+  const byId=new Map(baseQuestions.map(q=>[qid(q),q]));
+  return order.map(id=>byId.get(id)).filter(Boolean);
+}
+
+function setOrderMode(mode){
+  const ctx=trainingRangeContext();
+  if(!ctx)return;
+
+  // 先保存当前“顺序/乱序”这一侧的位置。
+  rememberCurrentPosition();
+
+  orderModes[ctx]=mode;
+  saveOrderModes();
+
+  activeQuestions=applyTrainingOrder(getBaseQuestionsForCurrentMode(),false);
+  restoreCurrentPosition();
+
+  renderOrderModePanel();
+  render();
+  focusQuestionTop();
+}
+
+function reshuffleCurrentRange(){
+  const ctx=trainingRangeContext();
+  if(!ctx||currentOrderMode()!=="random")return;
+
+  activeQuestions=applyTrainingOrder(getBaseQuestionsForCurrentMode(),true);
+  currentIndex=0;
+
+  // 新一轮乱序从第1题开始，覆盖旧乱序位置。
+  delete modePositions[positionContext()];
+  rememberCurrentPosition();
+
+  renderOrderModePanel();
+  render();
+  focusQuestionTop();
+}
+
+function renderOrderModePanel(){
+  const ctx=trainingRangeContext();
+
+  if(!ctx){
+    orderModePanel.style.display="none";
+    return;
+  }
+
+  orderModePanel.style.display="block";
+  orderModeButtons.innerHTML="";
+
+  const mode=currentOrderMode();
+
+  [
+    {key:"sequence",label:"🔢 顺序训练"},
+    {key:"random",label:"🔀 乱序训练"}
+  ].forEach(item=>{
+    const btn=document.createElement("button");
+    btn.className="order-mode-btn";
+    btn.classList.toggle("active",mode===item.key);
+    btn.textContent=item.label;
+    btn.addEventListener("click",()=>setOrderMode(item.key));
+    orderModeButtons.appendChild(btn);
+  });
+
+  if(mode==="random"){
+    const reshuffle=document.createElement("button");
+    reshuffle.className="reshuffle-btn";
+    reshuffle.textContent="↻ 重新乱序";
+    reshuffle.addEventListener("click",reshuffleCurrentRange);
+    orderModeButtons.appendChild(reshuffle);
+
+    orderModeTip.textContent="当前为乱序训练：本轮随机顺序会固定保存，切换模式再回来仍保持本轮顺序。";
+  }else{
+    orderModeTip.textContent="当前为顺序训练：按照题库原始顺序进行。";
+  }
+}
+
+function isCollectionMode(){
+  return currentMode==="wrong"||currentMode==="fav";
+}
+
+function isCollectionMemoMode(){
+  return isCollectionMode()&&(collectionStudyModes[currentMode]||"practice")==="memo";
+}
+
+function renderReviewModePanel(){
+  if(!isCollectionMode()){
+    reviewModePanel.style.display="none";
+    return;
+  }
+
+  reviewModePanel.style.display="block";
+
+  const label=currentMode==="wrong"?"错题":"收藏";
+  const mode=collectionStudyModes[currentMode]||"practice";
+
+  reviewModeTitle.textContent=`${label}复习方式`;
+  reviewModeTip.textContent=currentMode==="wrong"
+    ?"刷错题会重新独立作答，不继承普通刷题的答案；背错题直接查看答案与解析。"
+    :"刷收藏用于重新独立作答；背收藏直接查看答案与解析。";
+
+  reviewModeButtons.innerHTML="";
+
+  [
+    {key:"practice",label:`📝 刷${label}`},
+    {key:"memo",label:`📖 背${label}`}
+  ].forEach(item=>{
+    const btn=document.createElement("button");
+    btn.className="review-mode-btn";
+    btn.classList.toggle("active",mode===item.key);
+    btn.textContent=item.label;
+
+    btn.addEventListener("click",()=>{
+      if(!isCollectionMode())return;
+
+      rememberCurrentPosition();
+      collectionStudyModes[currentMode]=item.key;
+
+      activeQuestions=applyTrainingOrder(getBaseQuestionsForCurrentMode(),false);
+      restoreCurrentPosition();
+
+      renderReviewModePanel();
+      renderOrderModePanel();
+      render();
+      focusQuestionTop();
+    });
+
+    reviewModeButtons.appendChild(btn);
+  });
+}
+
+function normalizeSearchText(v){
+  return String(v??"")
+    .toLowerCase()
+    .replace(/\u3000/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function answerSearchText(q){
+  const parts=[String(q["正确答案"]??"")];
+
+  if(q.题型==="单选"||q.题型==="多选"){
+    const letters=normalizeChoiceAnswer(q["正确答案"],q.题型,q).split("");
+    letters.forEach(letter=>{
+      if(q[letter])parts.push(String(q[letter]));
+    });
+  }else if(q.题型==="判断"){
+    const normalized=normalizeChoiceAnswer(q["正确答案"],q.题型,q);
+    if(normalized)parts.push(normalized);
+
+    const letter=extractSingleChoiceLetter(q["正确答案"]);
+    if(letter&&q[letter])parts.push(String(q[letter]));
+  }
+
+  return parts.join(" ");
+}
+
+function searchableText(q){
+  return normalizeSearchText([
+    q["题目"],
+    q["A"],q["B"],q["C"],q["D"],q["E"],q["F"],
+    answerSearchText(q)
+  ].filter(Boolean).join(" "));
+}
+
+function doSearch(rawQuery){
+  const query=normalizeSearchText(rawQuery);
+  searchQuery=query;
+  searchAnswerVisible=false;
+
+  if(!query){
+    searchMatches=[];
+    searchInfo.textContent="输入关键字即可搜索题干、选项和正确答案。";
+    searchResults.style.display="none";
+    searchResults.innerHTML="";
+    return;
+  }
+
+  const keywords=query.split(" ").filter(Boolean);
+
+  searchMatches=allQuestions.filter(q=>{
+    const hay=searchableText(q);
+    return keywords.every(k=>hay.includes(k));
+  });
+
+  renderSearchResults();
+}
+
+function renderSearchResults(){
+  if(!searchQuery){
+    searchResults.style.display="none";
+    return;
+  }
+
+  searchInfo.textContent=`找到 ${searchMatches.length} 道匹配题目`;
+  searchResults.style.display="block";
+  searchResults.innerHTML="";
+
+  if(!searchMatches.length){
+    const div=document.createElement("div");
+    div.className="search-empty";
+    div.textContent="没有找到匹配题目，请尝试减少关键字。";
+    searchResults.appendChild(div);
+    return;
+  }
+
+  searchMatches.forEach((q,index)=>{
+    const btn=document.createElement("button");
+    btn.className="search-item";
+
+    const title=String(q["题目"]??"").trim();
+    const shortTitle=title.length>120?title.slice(0,120)+"…":title;
+
+    btn.innerHTML=`
+      <div class="search-item-head">
+        <span>题号 ${esc(q["题号"])}</span>
+        <span class="tag">${esc(q["题型"])}</span>
+        ${q["分类"]?`<span>${esc(q["分类"])}</span>`:""}
+      </div>
+      <div class="search-item-title">${esc(shortTitle)}</div>
+    `;
+
+    btn.addEventListener("click",()=>{
+      openSearchResult(index);
+    });
+
+    searchResults.appendChild(btn);
+  });
+}
+
+function openSearchResult(index){
+  if(!searchMatches.length)return;
+
+  currentMode="search";
+  activeQuestions=searchMatches;
+  currentIndex=Math.min(Math.max(index,0),activeQuestions.length-1);
+  searchAnswerVisible=false;
+
+  typeFilterPanel.style.display="none";
+  reviewModePanel.style.display="none";
+  orderModePanel.style.display="none";
+  examSetup.style.display="none";
+  examSummary.style.display="none";
+  emptyMode.style.display="none";
+
+  document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("active"));
+
+  searchResults.style.display="none";
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function backToSearchResults(){
+  searchAnswerVisible=false;
+  card.style.display="none";
+  emptyMode.style.display="none";
+  searchResults.style.display=searchQuery?"block":"none";
+  searchInfo.textContent=searchQuery
+    ?`找到 ${searchMatches.length} 道匹配题目`
+    :"输入关键字即可搜索题干、选项和正确答案。";
+
+  const panel=searchInput.closest(".search-panel");
+  if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderSearchQuestion(q){
+  answerArea.innerHTML="";
+
+  if(q.题型!=="填空"){
+    const box=document.createElement("div");
+    box.className="options";
+
+    getOptions(q).forEach(opt=>{
+      const div=document.createElement("div");
+      div.className="option disabled";
+      div.style.cursor="default";
+      div.innerHTML=q.题型==="判断"
+        ?`<span><strong>${esc(opt.key)}</strong></span>`
+        :`<span><strong>${esc(opt.key)}.</strong> ${esc(opt.text)}</span>`;
+      box.appendChild(div);
+    });
+
+    answerArea.appendChild(box);
+  }
+
+  let correctDisplay="";
+  if(q.题型==="填空"){
+    const standards=splitBlankAnswers(q["正确答案"]);
+    correctDisplay=standards.length===1
+      ?standards[0]
+      :standards.map((v,i)=>`第${i+1}空：${v}`).join("；");
+  }else{
+    correctDisplay=normalizeChoiceAnswer(q["正确答案"],q.题型,q);
+  }
+
+  const analysis=String(q["解析"]??"").trim();
+  const box=document.createElement("div");
+  box.className="search-answer"+(searchAnswerVisible?" show":"");
+  box.innerHTML=`
+    <div class="search-answer-title">正确答案：${esc(correctDisplay)}</div>
+    <div class="search-analysis">
+      <strong>解析：</strong>
+      ${analysis?esc(analysis):'<span class="empty">暂无解析</span>'}
+    </div>
+  `;
+  answerArea.appendChild(box);
+}
+
+function setActiveModeButton(m){
+  document.querySelectorAll(".mode-btn").forEach(b=>b.classList.toggle("active",b.dataset.mode===m));
+}
+
+function hideExamPieces(){
+  examSetup.style.display="none";
+  examSummary.style.display="none";
+}
+
+function applyMode(m){
+  rememberCurrentPosition();
+
+  currentMode=m;
+  currentIndex=0;
+  searchAnswerVisible=false;
+  searchResults.style.display=searchQuery?"block":"none";
+  setActiveModeButton((m==="examReview"||m==="examReviewAll")?"exam":m);
+  hideExamPieces();
+  reviewModePanel.style.display="none";
+  orderModePanel.style.display="none";
+
+  if(m==="exam"){
+    typeFilterPanel.style.display="none";
+    reviewModePanel.style.display="none";
+    orderModePanel.style.display="none";
+    overviewBar.style.display="none";
+    card.style.display="none";
+    emptyMode.style.display="none";
+    examSetup.style.display="block";
+    prepareExamSetup();
+    return;
+  }
+
+  if(m==="wrong"){
+    typeFilterPanel.style.display="none";
+    activeQuestions=applyTrainingOrder(getBaseQuestionsForCurrentMode(),false);
+    renderReviewModePanel();
+    renderOrderModePanel();
+  }else if(m==="fav"){
+    typeFilterPanel.style.display="none";
+    activeQuestions=applyTrainingOrder(getBaseQuestionsForCurrentMode(),false);
+    renderReviewModePanel();
+    renderOrderModePanel();
+  }else if(m==="all"||m==="memo"){
+    activeQuestions=filteredStudyQuestions();
+    renderTypeFilterPanel();
+    renderOrderModePanel();
+  }else{
+    typeFilterPanel.style.display="none";
+    activeQuestions=[...allQuestions];
+  }
+
+  restoreCurrentPosition();
+  updateCounts();
+  render();
+}
+
+function renderChoiceQuestion(q,s,locked){
+  const opts=getOptions(q);
+  const correct=normalizeChoiceAnswer(q["正确答案"],q.题型,q);
+  const box=document.createElement("div");
+  box.className="options";
+
+  opts.forEach(opt=>{
+    const lab=document.createElement("label");
+    lab.className="option";
+
+    const input=document.createElement("input");
+    input.type=q.题型==="多选"?"checkbox":"radio";
+    input.name="answer";
+    input.value=opt.key;
+    input.checked=s.selected.includes(opt.key);
+    input.disabled=locked;
+
+    const span=document.createElement("span");
+    span.innerHTML=q.题型==="判断"
+      ?`<strong>${esc(opt.key)}</strong>`
+      :`<strong>${esc(opt.key)}.</strong> ${esc(opt.text)}`;
+
+    if(input.checked)lab.classList.add("selected");
+
+    if(locked&&s.submitted){
+      lab.classList.add("disabled");
+      if(q.题型==="多选"){
+        if(correct.includes(opt.key))lab.classList.add("correct");
+        if(s.selected.includes(opt.key)&&!correct.includes(opt.key))lab.classList.add("wrong");
+      }else{
+        if(opt.key===correct)lab.classList.add("correct");
+        if(s.selected.includes(opt.key)&&opt.key!==correct)lab.classList.add("wrong");
+      }
+    }
+
+    input.addEventListener("change",()=>{
+      if(q.题型==="多选"){
+        if(input.checked&&!s.selected.includes(opt.key))s.selected.push(opt.key);
+        if(!input.checked)s.selected=s.selected.filter(v=>v!==opt.key);
+      }else{
+        s.selected=[opt.key];
+      }
+      render();
+    });
+
+    lab.appendChild(input);
+    lab.appendChild(span);
+    box.appendChild(lab);
+  });
+
+  answerArea.appendChild(box);
+}
+
+function renderBlankQuestion(q,s,locked){
+  const st=splitBlankAnswers(q["正确答案"]);
+  while(s.blanks.length<st.length)s.blanks.push("");
+  if(s.blanks.length>st.length)s.blanks=s.blanks.slice(0,st.length);
+
+  const box=document.createElement("div");
+  box.className="blank-area";
+
+  st.forEach((standard,i)=>{
+    const row=document.createElement("div");
+    row.className="blank-row";
+
+    const lab=document.createElement("div");
+    lab.className="blank-label";
+    lab.textContent=st.length===1?"你的答案":`填空 ${i+1}`;
+
+    const input=document.createElement("input");
+    input.className="blank-input";
+    input.type="text";
+    input.placeholder=st.length===1?"请输入答案":`请输入第 ${i+1} 空`;
+    input.value=s.blanks[i]||"";
+    input.disabled=locked;
+
+    if(locked&&s.submitted){
+      input.classList.add(
+        normalizeBlankText(s.blanks[i])===normalizeBlankText(standard)?"correct":"wrong"
+      );
+    }
+
+    input.addEventListener("input",()=>{
+      s.blanks[i]=input.value;
+      if(currentMode==="exam")updateOverviewBar();
+    });
+
+    row.appendChild(lab);
+    row.appendChild(input);
+    box.appendChild(row);
+  });
+
+  answerArea.appendChild(box);
+}
+
+function renderMemoQuestion(q){
+  answerArea.innerHTML="";
+
+  if(q.题型!=="填空"){
+    const box=document.createElement("div");
+    box.className="options";
+
+    getOptions(q).forEach(opt=>{
+      const div=document.createElement("div");
+      div.className="option disabled";
+      div.style.cursor="default";
+      div.innerHTML=q.题型==="判断"
+        ?`<span><strong>${esc(opt.key)}</strong></span>`
+        :`<span><strong>${esc(opt.key)}.</strong> ${esc(opt.text)}</span>`;
+      box.appendChild(div);
+    });
+
+    answerArea.appendChild(box);
+  }
+
+  let correctDisplay="";
+  if(q.题型==="填空"){
+    const standards=splitBlankAnswers(q["正确答案"]);
+    correctDisplay=standards.length===1
+      ?standards[0]
+      :standards.map((v,i)=>`第${i+1}空：${v}`).join("；");
+  }else{
+    correctDisplay=normalizeChoiceAnswer(q["正确答案"],q.题型,q);
+  }
+
+  const analysis=String(q["解析"]??"").trim();
+
+  const memo=document.createElement("div");
+  memo.className="memo-answer";
+  memo.innerHTML=`
+    <div class="memo-answer-title">正确答案：${esc(correctDisplay)}</div>
+    <div class="memo-analysis">
+      <strong>解析：</strong>
+      ${analysis?esc(analysis):'<span class="empty">暂无解析</span>'}
+    </div>
+    <div class="memo-tip">背题模式仅用于浏览记忆，不会产生错题记录。</div>
+  `;
+
+  answerArea.appendChild(memo);
+}
+
+function canShowOverview(){
+  return currentMode==="all"
+    || currentMode==="wrong"
+    || currentMode==="fav"
+    || currentMode==="memo"
+    || currentMode==="exam"
+    || currentMode==="examReviewAll";
+}
+
+function overviewKind(){
+  if(currentMode==="memo"||isCollectionMemoMode())return "memo";
+  if(currentMode==="exam"||currentMode==="examReviewAll")return "exam";
+  return "practice";
+}
+
+function practiceOverviewCounts(){
+  let ok=0,bad=0,undone=0;
+
+  activeQuestions.forEach(q=>{
+    const s=storedProgressStatus(q);
+    if(s==="ok")ok++;
+    else if(s==="bad")bad++;
+    else undone++;
+  });
+
+  return {ok,bad,done:ok+bad,undone,total:activeQuestions.length};
+}
+
+function memoOverviewCounts(){
+  let visited=0;
+
+  activeQuestions.forEach(q=>{
+    if(isMemoVisited(q))visited++;
+  });
+
+  return {
+    visited,
+    unvisited:activeQuestions.length-visited,
+    total:activeQuestions.length
+  };
+}
+
+function examOverviewCounts(){
+  let answered=0,unanswered=0,ok=0,bad=0;
+
+  activeQuestions.forEach(q=>{
+    const state=getExamState(q);
+    const answeredThis=hasAnswer(q,state);
+
+    if(answeredThis)answered++;
+    else unanswered++;
+
+    if(examSubmitted&&answeredThis){
+      if(isAnswerCorrect(q,state))ok++;
+      else bad++;
+    }
+  });
+
+  return {
+    answered,
+    unanswered,
+    ok,
+    bad,
+    total:activeQuestions.length
+  };
+}
+
+function updateOverviewBar(){
+  if(!canShowOverview()||!activeQuestions.length){
+    overviewBar.style.display="none";
+    return;
+  }
+
+  overviewBar.style.display="flex";
+
+  if(currentMode==="memo"||isCollectionMemoMode()){
+    const c=memoOverviewCounts();
+    overviewInlineSummary.textContent=`已浏览 ${c.visited}｜未浏览 ${c.unvisited}`;
+    el("openOverviewBtn").textContent="☷ 题号总览";
+    return;
+  }
+
+  if(currentMode==="exam"||currentMode==="examReviewAll"){
+    const c=examOverviewCounts();
+
+    if(examSubmitted){
+      overviewInlineSummary.textContent=
+        `正确 ${c.ok}｜错误 ${c.bad}｜未答 ${c.unanswered}`;
+    }else{
+      overviewInlineSummary.textContent=
+        `已答 ${c.answered}｜未答 ${c.unanswered}`;
+    }
+
+    el("openOverviewBtn").textContent="☷ 答题卡";
+    return;
+  }
+
+  const c=practiceOverviewCounts();
+  overviewInlineSummary.textContent=`已做 ${c.done}｜未做 ${c.undone}`;
+  el("openOverviewBtn").textContent="☷ 题号总览";
+}
+
+function renderOverviewLegend(){
+  if(currentMode==="memo"||isCollectionMemoMode()){
+    overviewLegend.innerHTML=`
+      <span><i class="legend-dot" style="background:#f8fafc"></i>未浏览</span>
+      <span><i class="legend-dot" style="background:#ede9fe;border-color:#c4b5fd"></i>已浏览</span>
+      <span><i class="legend-dot legend-current"></i>当前题</span>
+    `;
+    return;
+  }
+
+  if(currentMode==="exam"||currentMode==="examReviewAll"){
+    if(examSubmitted){
+      overviewLegend.innerHTML=`
+        <span><i class="legend-dot legend-ok"></i>正确</span>
+        <span><i class="legend-dot legend-bad"></i>错误</span>
+        <span><i class="legend-dot" style="background:#fef3c7;border-color:#fcd34d"></i>未答</span>
+        <span><i class="legend-dot legend-current"></i>当前题</span>
+      `;
+    }else{
+      overviewLegend.innerHTML=`
+        <span><i class="legend-dot" style="background:#f8fafc"></i>未答</span>
+        <span><i class="legend-dot" style="background:#dbeafe;border-color:#93c5fd"></i>已答</span>
+        <span><i class="legend-dot legend-current"></i>当前题</span>
+      `;
+    }
+    return;
+  }
+
+  overviewLegend.innerHTML=`
+    <span><i class="legend-dot legend-unanswered"></i>未做</span>
+    <span><i class="legend-dot legend-ok"></i>已做正确</span>
+    <span><i class="legend-dot legend-bad"></i>已做错误</span>
+    <span><i class="legend-dot legend-current"></i>当前题</span>
+  `;
+}
+
+function renderOverviewModal(){
+  renderOverviewLegend();
+
+  if(currentMode==="memo"||isCollectionMemoMode()){
+    const c=memoOverviewCounts();
+    overviewModalSummary.textContent=
+      `当前背题范围共 ${c.total} 题｜已浏览 ${c.visited}｜未浏览 ${c.unvisited}`;
+  }else if(currentMode==="exam"||currentMode==="examReviewAll"){
+    const c=examOverviewCounts();
+
+    overviewModalSummary.textContent=examSubmitted
+      ?`本次试卷共 ${c.total} 题｜正确 ${c.ok}｜错误 ${c.bad}｜未答 ${c.unanswered}`
+      :`本次试卷共 ${c.total} 题｜已答 ${c.answered}｜未答 ${c.unanswered}`;
+  }else{
+    const c=practiceOverviewCounts();
+    overviewModalSummary.textContent=
+      `当前范围共 ${c.total} 题｜已做 ${c.done}（正确 ${c.ok}，错误 ${c.bad}）｜未做 ${c.undone}`;
+  }
+
+  qnumGrid.innerHTML="";
+
+  activeQuestions.forEach((q,index)=>{
+    const btn=document.createElement("button");
+    btn.className="qnum-btn";
+
+    if(currentMode==="memo"||isCollectionMemoMode()){
+      if(isMemoVisited(q))btn.classList.add("done-visited");
+    }else if(currentMode==="exam"||currentMode==="examReviewAll"){
+      const state=getExamState(q);
+      const answered=hasAnswer(q,state);
+
+      if(examSubmitted){
+        if(!answered){
+          btn.classList.add("exam-unanswered");
+        }else if(isAnswerCorrect(q,state)){
+          btn.classList.add("done-ok");
+        }else{
+          btn.classList.add("done-bad");
+        }
+      }else if(answered){
+        btn.classList.add("done-answered");
+      }
+    }else{
+      const status=storedProgressStatus(q);
+      if(status==="ok")btn.classList.add("done-ok");
+      if(status==="bad")btn.classList.add("done-bad");
+    }
+
+    if(index===currentIndex)btn.classList.add("current");
+
+    // 模拟考试使用“试卷顺序号”，其他模式使用原题号
+    const randomTraining=trainingRangeContext()&&currentOrderMode()==="random";
+
+    btn.textContent=(currentMode==="exam"||currentMode==="examReviewAll"||randomTraining)
+      ?String(index+1)
+      :String(q["题号"]??(index+1));
+
+    btn.title=(currentMode==="exam"||currentMode==="examReviewAll")
+      ?`试卷第 ${index+1} 题｜原题号 ${q["题号"]}`
+      :randomTraining
+        ?`乱序第 ${index+1} 题｜原题号 ${q["题号"]}`
+        :`第 ${index+1} / ${activeQuestions.length} 题`;
+
+    btn.addEventListener("click",()=>{
+      if(currentMode==="exam"||currentMode==="examReviewAll"){
+        currentIndex=index;
+      }else{
+        setCurrentQuestionIndex(index);
+      }
+
+      // 交卷后从成绩页点击答题卡题号，可进入试卷复盘
+      if((currentMode==="exam"||currentMode==="examReviewAll")&&examSubmitted){
+        examSummary.style.display="none";
+      }
+
+      overviewModal.classList.remove("show");
+      render();
+      focusQuestionTop();
+    });
+
+    qnumGrid.appendChild(btn);
+  });
+
+  if(currentMode==="all"){
+    resetProgressBtn.style.display="inline-block";
+    resetProgressBtn.textContent="清空刷题进度";
+  }else if(currentMode==="memo"||isCollectionMemoMode()){
+    resetProgressBtn.style.display="inline-block";
+    resetProgressBtn.textContent="清空当前背题范围浏览记录";
+  }else{
+    resetProgressBtn.style.display="none";
+  }
+}
+
+function openOverview(){
+  if(!canShowOverview()||!activeQuestions.length)return;
+  renderOverviewModal();
+  overviewModal.classList.add("show");
+}
+
+function closeOverview(){
+  overviewModal.classList.remove("show");
+}
+
+function render(){
+  if(!activeQuestions.length){
+    overviewBar.style.display="none";
+    card.style.display="none";
+    emptyMode.style.display="block";
+    emptyMode.textContent=
+      currentMode==="wrong"?"目前还没有错题。":
+      currentMode==="fav"?"目前还没有收藏题。":
+      currentMode==="examReview"?"本次考试没有错题。":
+      (currentMode==="all"||currentMode==="memo")
+        ?`${typeFilterLabel()}中没有可显示的题目。`
+        :"题库中没有可显示的题目。";
+    return;
+  }
+
+  emptyMode.style.display="none";
+  card.style.display="block";
+
+  if(currentIndex>=activeQuestions.length)currentIndex=activeQuestions.length-1;
+
+  const q=activeQuestions[currentIndex];
+  const s=getCurrentState(q);
+  const inExam=currentMode==="exam";
+  const inWrongExamReview=currentMode==="examReview";
+  const inFullExamReview=currentMode==="examReviewAll";
+  const inReview=inWrongExamReview||inFullExamReview;
+  const inMemo=currentMode==="memo";
+  const inCollectionMemo=isCollectionMemoMode();
+  const inSearch=currentMode==="search";
+
+  let meta=`第 ${currentIndex+1} / ${activeQuestions.length} 题
+    <span class="tag">${esc(q.题型)}</span>
+    <span style="margin-left:8px;">题号 ${esc(q["题号"])}</span>`;
+
+  if(inExam||inReview){
+    meta+=`<span class="score-tag">${esc(examScoreMap.get(qid(q))??0)} 分</span>`;
+  }
+
+  qMeta.innerHTML=meta;
+  qCategory.textContent=q["分类"]?String(q["分类"]):"";
+  qTitle.textContent=q["题目"];
+
+  if(inMemo||inCollectionMemo)markMemoVisited(q);
+  updateOverviewBar();
+  rememberCurrentPosition();
+
+  const fav=isFav(q);
+  starBtn.textContent=fav?"★":"☆";
+  starBtn.classList.toggle("on",fav);
+  starBtn.style.display=(inExam&&!examSubmitted)?"none":"inline-block";
+
+  if(inSearch){
+    renderSearchQuestion(q);
+
+    practiceActions.style.display="none";
+    wrongManageActions.style.display="none";
+    memoActions.style.display="none";
+    examActions.style.display="none";
+    searchViewActions.style.display="flex";
+
+    el("searchPrevBtn").disabled=currentIndex===0;
+    el("searchNextBtn").disabled=currentIndex===activeQuestions.length-1;
+    el("toggleSearchAnswerBtn").textContent=searchAnswerVisible?"隐藏答案":"查看答案";
+
+    resultBox.className="result";
+    resultBox.innerHTML="";
+    progress.textContent=`搜索结果｜第 ${currentIndex+1} / ${activeQuestions.length} 题`;
+    return;
+  }
+
+  searchViewActions.style.display="none";
+
+  if(inMemo||inCollectionMemo){
+    renderMemoQuestion(q);
+    practiceActions.style.display="none";
+    wrongManageActions.style.display=currentMode==="wrong"?"flex":"none";
+    examActions.style.display="none";
+    memoActions.style.display="flex";
+    el("memoPrevBtn").disabled=currentIndex===0;
+    el("memoNextBtn").disabled=currentIndex===activeQuestions.length-1;
+    resultBox.className="result";
+    resultBox.innerHTML="";
+
+    const orderLabel=currentOrderMode()==="random"?"乱序":"顺序";
+    const memoName=inMemo
+      ?`背题模式 · ${typeFilterLabel()} · ${orderLabel}`
+      :(currentMode==="wrong"?`背错题 · ${orderLabel}`:`背收藏 · ${orderLabel}`);
+
+    progress.textContent=`${memoName}｜第 ${currentIndex+1} / ${activeQuestions.length} 题`;
+    return;
+  }
+
+  memoActions.style.display="none";
+  searchViewActions.style.display="none";
+  wrongManageActions.style.display=currentMode==="wrong"?"flex":"none";
+  answerArea.innerHTML="";
+
+  const locked=inReview||(inExam&&examSubmitted)||(!inExam&&s.submitted);
+
+  if(q.题型==="填空")renderBlankQuestion(q,s,locked);
+  else renderChoiceQuestion(q,s,locked);
+
+  if(inExam||inReview){
+    practiceActions.style.display="none";
+    wrongManageActions.style.display="none";
+    examActions.style.display="flex";
+    el("examPrevBtn").disabled=currentIndex===0;
+    el("examNextBtn").disabled=currentIndex===activeQuestions.length-1;
+
+    if(examSubmitted||inReview){
+      el("submitExamBtn").textContent="返回成绩单";
+      renderResult(q,s);
+
+      if(inFullExamReview){
+        const c=examOverviewCounts();
+        progress.textContent=`整卷复盘｜正确 ${c.ok}｜错误 ${c.bad}｜未答 ${c.unanswered}`;
+      }else if(inWrongExamReview){
+        progress.textContent=`考试错题回顾｜第 ${currentIndex+1} / ${activeQuestions.length} 题`;
+      }else{
+        const c=examOverviewCounts();
+        progress.textContent=`考试复盘｜正确 ${c.ok}｜错误 ${c.bad}｜未答 ${c.unanswered}`;
+      }
+    }else{
+      el("submitExamBtn").textContent="提交试卷";
+      resultBox.className="result";
+      resultBox.innerHTML="";
+      const answered=activeQuestions.filter(q0=>hasAnswer(q0,getExamState(q0))).length;
+      progress.textContent=`模拟考试｜已作答 ${answered} / ${activeQuestions.length} 题｜未交卷前不显示答案`;
+    }
+  }else{
+    practiceActions.style.display="flex";
+    examActions.style.display="none";
+
+    submitBtn.disabled=s.submitted||inReview;
+    submitBtn.textContent=s.submitted?"已提交":"提交答案";
+    submitBtn.style.display=inReview?"none":"inline-block";
+    prevBtn.disabled=currentIndex===0;
+    nextBtn.disabled=currentIndex===activeQuestions.length-1;
+
+    renderResult(q,s);
+
+    const orderLabel=currentOrderMode()==="random"?"乱序":"顺序";
+    const name=
+      currentMode==="wrong"?`刷错题 · ${orderLabel}`:
+      currentMode==="fav"?`刷收藏 · ${orderLabel}`:
+      `刷题模式 · ${typeFilterLabel()} · ${orderLabel}`;
+
+    if(inReview){
+      progress.textContent=`${name}｜共 ${activeQuestions.length} 道`;
+    }else{
+      const c=practiceOverviewCounts();
+      progress.textContent=`${name}｜已记录完成 ${c.done} / ${activeQuestions.length} 题`;
+    }
+  }
+}
+
+function renderResult(q,s){
+  resultBox.className="result";
+  resultBox.innerHTML="";
+  if(!s.submitted)return;
+
+  const ok=isAnswerCorrect(q,s);
+  const analysis=String(q["解析"]??"").trim();
+
+  let user="",correct="";
+
+  if(q.题型==="填空"){
+    const st=splitBlankAnswers(q["正确答案"]);
+    user=(s.blanks||[]).map((v,i)=>`第${i+1}空：${v||"未填写"}`).join("；");
+    correct=st.map((v,i)=>`第${i+1}空：${v}`).join("；");
+  }else{
+    user=selectedChoiceAnswer(q,s)||"未作答";
+    correct=normalizeChoiceAnswer(q["正确答案"],q.题型,q);
+  }
+
+  resultBox.className="result "+(ok?"ok":"bad");
+
+  const earned=(currentMode==="examReview"||currentMode==="examReviewAll"||(currentMode==="exam"&&examSubmitted))
+    ?(ok?(examScoreMap.get(qid(q))??0):0)
+    :null;
+
+  resultBox.innerHTML=`
+    <div style="font-size:17px;font-weight:700;margin-bottom:6px;">${ok?"✅ 回答正确":"❌ 回答错误"}</div>
+    ${earned!==null?`<div><strong>本题得分：</strong>${earned} / ${examScoreMap.get(qid(q))??0}</div>`:""}
+    <div><strong>你的答案：</strong>${esc(user)}</div>
+    <div><strong>正确答案：</strong>${esc(correct)}</div>
+    ${!ok?'<div class="wrong-note">已加入错题集。</div>':""}
+    <div class="analysis-box"><strong>解析：</strong>${analysis?esc(analysis):'<span class="empty">暂无解析</span>'}</div>
+  `;
+}
+
+submitBtn.addEventListener("click",()=>{
+  if(!activeQuestions.length)return;
+
+  const q=activeQuestions[currentIndex];
+  const s=getPracticeState(q);
+
+  if(q.题型==="填空"){
+    const st=splitBlankAnswers(q["正确答案"]);
+    while(s.blanks.length<st.length)s.blanks.push("");
+    if(s.blanks.some(v=>normalizeBlankText(v)==="")){
+      alert("请先填写所有空，再提交。");
+      return;
+    }
+  }else if(!s.selected.length){
+    alert("请先选择答案，再提交。");
+    return;
+  }
+
+  s.submitted=true;
+  const ok=isAnswerCorrect(q,s);
+
+  markPracticeProgress(q,ok);
+  if(!ok)addWrong(q);
+
+  updateCounts();
+  render();
+});
+
+starBtn.addEventListener("click",()=>{
+  if(!activeQuestions.length)return;
+
+  const q=activeQuestions[currentIndex];
+  toggleFav(q);
+  updateCounts();
+
+  currentMode==="fav"&&!isFav(q)?applyMode("fav"):render();
+});
+
+el("removeWrongDirectBtn").addEventListener("click",()=>{
+  if(currentMode!=="wrong"||!activeQuestions.length)return;
+
+  const q=activeQuestions[currentIndex];
+  removeWrong(q);
+  updateCounts();
+
+  activeQuestions=applyTrainingOrder(getBaseQuestionsForCurrentMode(),false);
+
+  if(currentIndex>=activeQuestions.length){
+    currentIndex=Math.max(0,activeQuestions.length-1);
+  }
+
+  rememberCurrentPosition();
+  render();
+});
+
+el("openOverviewBtn").addEventListener("click",openOverview);
+el("closeOverviewBtn").addEventListener("click",closeOverview);
+
+overviewModal.addEventListener("click",e=>{
+  if(e.target===overviewModal)closeOverview();
+});
+
+resetProgressBtn.addEventListener("click",()=>{
+  if(currentMode==="all"){
+    if(!confirm("确定清空本题库的刷题完成进度吗？\n错题集和收藏不会被删除。")){
+      return;
+    }
+
+    practiceProgress={};
+    savePracticeProgress();
+
+    // 清空“刷题进度”时同时清除刷题各专项的上次位置，
+    // 避免用户明确重置后仍然跳回旧题。
+    ["全部",...TYPES].forEach(type=>{
+      delete modePositions[`all:${type}:sequence`];
+      delete modePositions[`all:${type}:random`];
+    });
+    saveModePositions();
+    currentIndex=0;
+  }else if(currentMode==="memo"||isCollectionMemoMode()){
+    if(!confirm("确定清空当前背题范围的浏览记录吗？\n收藏、错题和刷题进度不会受影响。")){
+      return;
+    }
+
+    activeQuestions.forEach(q=>memoVisited.delete(qid(q)));
+    saveMemoVisited();
+  }else{
+    return;
+  }
+
+  updateOverviewBar();
+  renderOverviewModal();
+  render();
+});
+
+prevBtn.addEventListener("click",()=>{
+  if(currentIndex>0){setCurrentQuestionIndex(currentIndex-1);render();focusQuestionTop();}
+});
+nextBtn.addEventListener("click",()=>{
+  if(currentIndex<activeQuestions.length-1){setCurrentQuestionIndex(currentIndex+1);render();focusQuestionTop();}
+});
+el("memoPrevBtn").addEventListener("click",()=>{
+  if(currentIndex>0){setCurrentQuestionIndex(currentIndex-1);render();focusQuestionTop();}
+});
+el("memoNextBtn").addEventListener("click",()=>{
+  if(currentIndex<activeQuestions.length-1){setCurrentQuestionIndex(currentIndex+1);render();focusQuestionTop();}
+});
+el("examPrevBtn").addEventListener("click",()=>{
+  if(currentIndex>0){setCurrentQuestionIndex(currentIndex-1);render();focusQuestionTop();}
+});
+el("examNextBtn").addEventListener("click",()=>{
+  if(currentIndex<activeQuestions.length-1){setCurrentQuestionIndex(currentIndex+1);render();focusQuestionTop();}
+});
+
+searchInput.addEventListener("input",()=>{
+  doSearch(searchInput.value);
+});
+
+searchInput.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&searchMatches.length){
+    e.preventDefault();
+    openSearchResult(0);
+  }
+});
+
+clearSearchBtn.addEventListener("click",()=>{
+  searchInput.value="";
+  doSearch("");
+  if(currentMode==="search"){
+    applyMode("all");
+  }
+  searchInput.focus();
+});
+
+el("toggleSearchAnswerBtn").addEventListener("click",()=>{
+  if(currentMode!=="search"||!activeQuestions.length)return;
+  searchAnswerVisible=!searchAnswerVisible;
+  render();
+});
+
+el("backToSearchBtn").addEventListener("click",()=>{
+  if(currentMode!=="search")return;
+  backToSearchResults();
+});
+
+el("searchPrevBtn").addEventListener("click",()=>{
+  if(currentMode==="search"&&currentIndex>0){
+    currentIndex--;
+    searchAnswerVisible=false;
+    render();
+    focusQuestionTop();
+  }
+});
+
+el("searchNextBtn").addEventListener("click",()=>{
+  if(currentMode==="search"&&currentIndex<activeQuestions.length-1){
+    currentIndex++;
+    searchAnswerVisible=false;
+    render();
+    focusQuestionTop();
+  }
+});
+
+document.querySelectorAll(".mode-btn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    const mode=b.dataset.mode;
+    applyMode(mode);
+    if(mode!=="exam")focusQuestionTop();
+  });
+});
+
+// 模拟考试
+const examInputs=[
+  ["单选","countSingle","scoreSingle","availSingle"],
+  ["多选","countMulti","scoreMulti","availMulti"],
+  ["判断","countJudge","scoreJudge","availJudge"],
+  ["填空","countBlank","scoreBlank","availBlank"]
+];
+
+function typeCount(t){return allQuestions.filter(q=>q.题型===t).length}
+function readNum(id){
+  const v=Number(el(id).value);
+  return Number.isFinite(v)&&v>=0?v:0;
+}
+function formatScore(n){
+  const x=Number(n);
+  return Number.isInteger(x)?String(x):x.toFixed(1).replace(/\.0$/,"");
+}
+function prepareExamSetup(){
+  examInputs.forEach(([t,c,s,a])=>{
+    const n=typeCount(t);
+    el(a).textContent=n;
+    el(c).max=n;
+  });
+  updateExamTotal();
+}
+function updateExamTotal(){
+  let tq=0,ts=0;
+  examInputs.forEach(([t,c,s])=>{
+    const n=Math.floor(readNum(c)),p=readNum(s);
+    tq+=n;ts+=n*p;
+  });
+  el("examTotal").textContent=`总题数：${tq} ｜ 总分：${formatScore(ts)}`;
+}
+examInputs.forEach(([t,c,s])=>{
+  el(c).addEventListener("input",updateExamTotal);
+  el(s).addEventListener("input",updateExamTotal);
+});
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+el("startExamBtn").addEventListener("click",()=>{
+  const specs=[];
+  let totalQ=0;
+
+  for(const[t,c,s]of examInputs){
+    const count=Math.floor(readNum(c));
+    const score=readNum(s);
+    const available=typeCount(t);
+
+    if(count>available){
+      alert(`${t}题只有 ${available} 道可用。`);
+      return;
+    }
+
+    if(count>0&&score<=0){
+      alert(`${t}题每题分值必须大于 0。`);
+      return;
+    }
+
+    specs.push({type:t,count,score});
+    totalQ+=count;
+  }
+
+  if(totalQ<=0){
+    alert("请至少设置 1 道考试题。");
+    return;
+  }
+
+  examQuestions=[];
+  examStates=new Map();
+  examScoreMap=new Map();
+  examSubmitted=false;
+
+  for(const spec of specs){
+    const pool=allQuestions.filter(q=>q.题型===spec.type);
+    const picked=shuffle(pool).slice(0,spec.count);
+
+    picked.forEach(q=>{
+      examQuestions.push(q);
+      examScoreMap.set(qid(q),spec.score);
+      getExamState(q);
+    });
+  }
+
+  examQuestions=shuffle(examQuestions);
+  activeQuestions=examQuestions;
+  currentMode="exam";
+  currentIndex=0;
+
+  examSetup.style.display="none";
+  examSummary.style.display="none";
+  setActiveModeButton("exam");
+  render();
+});
+
+el("submitExamBtn").addEventListener("click",()=>{
+  if(!examQuestions.length)return;
+
+  if(examSubmitted){
+    showExamSummary();
+    return;
+  }
+
+  const u=examQuestions.filter(q=>!hasAnswer(q,getExamState(q))).length;
+  const msg=u>0
+    ?`还有 ${u} 道题未作答，确定现在交卷吗？`
+    :"确定提交试卷吗？提交后不能修改答案。";
+
+  if(!confirm(msg))return;
+
+  examSubmitted=true;
+
+  examQuestions.forEach(q=>{
+    const s=getExamState(q);
+    s.submitted=true;
+    const ok=isAnswerCorrect(q,s);
+    markPracticeProgress(q,ok);
+    if(!ok)addWrong(q);
+  });
+
+  updateCounts();
+  showExamSummary();
+});
+
+function showExamSummary(){
+  let earned=0,total=0,correctN=0;
+  const byType={};
+
+  TYPES.forEach(t=>{
+    byType[t]={count:0,correct:0,earned:0,total:0};
+  });
+
+  for(const q of examQuestions){
+    const s=getExamState(q);
+    const score=Number(examScoreMap.get(qid(q))||0);
+    const ok=isAnswerCorrect(q,s);
+
+    total+=score;
+    byType[q.题型].count++;
+    byType[q.题型].total+=score;
+
+    if(ok){
+      correctN++;
+      earned+=score;
+      byType[q.题型].correct++;
+      byType[q.题型].earned+=score;
+    }
+  }
+
+  const wrong=examQuestions.filter(q=>!isAnswerCorrect(q,getExamState(q)));
+
+  card.style.display="none";
+  overviewBar.style.display="none";
+  emptyMode.style.display="none";
+  examSetup.style.display="none";
+  examSummary.style.display="block";
+
+  const items=TYPES
+    .filter(t=>byType[t].count>0)
+    .map(t=>`
+      <div class="summary-item">
+        <strong>${esc(t)}题</strong>
+        ${byType[t].correct}/${byType[t].count} 题正确<br>
+        ${formatScore(byType[t].earned)}/${formatScore(byType[t].total)} 分
+      </div>
+    `)
+    .join("");
+
+  examSummary.innerHTML=`
+    <h2>考试结果</h2>
+    <div class="big-score">${formatScore(earned)} / ${formatScore(total)} 分</div>
+    <div>
+      正确：<strong>${correctN}</strong> 题　
+      错误/未答：<strong>${examQuestions.length-correctN}</strong> 题　
+      总题数：<strong>${examQuestions.length}</strong> 题
+    </div>
+    <div class="summary-grid">${items}</div>
+    <div class="exam-note">答错或未作答题目已自动加入错题集。</div>
+    <div class="actions">
+      <button id="reviewFullExamBtn" class="primary">查看整张试卷</button>
+      <button id="viewExamOverviewBtn" class="secondary">查看答题卡</button>
+      <button id="reviewExamWrongBtn" class="secondary" ${wrong.length?"":"disabled"}>只看错题（${wrong.length}）</button>
+      <button id="resetExamBtn" class="secondary">重新设置考试</button>
+    </div>
+  `;
+
+  const fullReviewBtn=document.getElementById("reviewFullExamBtn");
+  if(fullReviewBtn){
+    fullReviewBtn.addEventListener("click",()=>{
+      currentMode="examReviewAll";
+      typeFilterPanel.style.display="none";
+      reviewModePanel.style.display="none";
+      orderModePanel.style.display="none";
+      activeQuestions=examQuestions;
+      currentIndex=0;
+      examSummary.style.display="none";
+      setActiveModeButton("exam");
+      render();
+      focusQuestionTop();
+    });
+  }
+
+  const overviewBtn=document.getElementById("viewExamOverviewBtn");
+  if(overviewBtn){
+    overviewBtn.addEventListener("click",()=>{
+      activeQuestions=examQuestions;
+      currentMode="examReviewAll";
+      openOverview();
+    });
+  }
+
+  const rb=document.getElementById("reviewExamWrongBtn");
+  if(rb&&wrong.length){
+    rb.addEventListener("click",()=>{
+      currentMode="examReview";
+      typeFilterPanel.style.display="none";
+      reviewModePanel.style.display="none";
+      orderModePanel.style.display="none";
+      activeQuestions=wrong;
+      currentIndex=0;
+      examSummary.style.display="none";
+      setActiveModeButton("exam");
+      render();
+    });
+  }
+
+  document.getElementById("resetExamBtn").addEventListener("click",()=>applyMode("exam"));
+}
+
+practiceProgress=loadPracticeProgress();
+memoVisited=loadMemoVisited();
+orderModes=loadOrderModes();
+shuffleOrders=loadShuffleOrders();
+modePositions=loadModePositions();
+modeTypeFilters.all=loadStoredTypeFilter("all");
+modeTypeFilters.memo=loadStoredTypeFilter("memo");
+
+updateCounts();
+updateBankMeta();
+
+// 初始化阶段 appInitialized=false，applyMode 开头不会把第1题覆盖进位置表。
+// applyMode 会先建立当前列表，再按 modePositions 恢复。
+applyMode("all");
+
+appInitialized=true;
+</script>
+</body>
+</html>
